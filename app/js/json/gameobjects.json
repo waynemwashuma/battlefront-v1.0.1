@@ -1,0 +1,36 @@
+{
+    "evcodes": {
+        "objcodes": {
+            "tank": 100,
+            "APC": 200,
+            "flak": 300,
+            "base": 500
+        },
+        "actioncodes": {
+            "creation": 1001,
+            "occupation": 1010,
+            "damage": 1100,
+            "destruction": 1000,
+            "movement": 11100
+        }
+    },
+    "productioncodes":{
+        "flak":{
+            "steel":20000,
+            "concrete":65000
+        },
+        "tank":{
+            "steel":15000,
+            "aluminium":7000
+        },
+        "APC":{
+            "steel":15000,
+            "aluminium":45000
+        }
+    },
+    "productontimes":{
+        "tank":15,
+        "apc":40,
+        "flak":120
+    }
+}

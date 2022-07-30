@@ -1,0 +1,14 @@
+{
+    "flak":{
+        "concrete":50000,
+        "steel":45000
+    },
+    "tank":{
+        "steel":20000,
+        "aluminium":5000
+    },
+    "APC":{
+        "steel":10000,
+        "aluminium":45000
+    }
+}
