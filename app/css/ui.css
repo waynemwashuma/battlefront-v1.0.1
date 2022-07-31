@@ -1,0 +1,1130 @@
+:root {
+    --black: black;
+    --blue1: blue;
+    --blue2: royalblue;
+    --blue3: steelblue;
+}
+
+* {
+    font-family: Verdana;
+
+}
+tbody{
+    display: block;
+    height: auto;
+    overflow-y: scroll;
+    width: 100%;
+}
+html {
+    width: 100%;
+    height: 100vh;
+    font-size: 100%;
+    overflow: hidden;
+}
+
+body {
+    margin: 0%;
+    width: inherit;
+    height: inherit;
+}
+
+#top-view {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    width: 800px;
+}
+
+/*resources tab*/
+#res-ui {
+    pointer-events: none;
+    color: aliceblue;
+    background-color: black;
+    height: 100%;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: row;
+    width: 60%;
+}
+
+#res-ui>div {
+    margin: 0px auto;
+}
+
+#res-ui>div>p {
+    margin: 0%;
+}
+
+#res-ui>div>label {
+    font-size: 12px
+}
+
+/*alert box css*/
+#alert-ok-butt {
+    width: 50px;
+    height: 20px;
+    background-color: lightsteelblue;
+    color: royalblue;
+    /* position: relative;
+    left: 60%; */
+    margin: auto;
+}
+
+#alert-wrapper {
+    margin: 0px;
+    padding: 0px;
+    z-index: 100;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+#alert-blank {
+    width: inherit;
+    height: inherit;
+    position: inherit;
+    background-color: gray;
+    opacity: 0.5;
+}
+
+#alert-container {
+    width: 300px;
+    height: 200px;
+    position: absolute;
+    z-index: 30;
+    background-color: lightseagreen;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    border-style: outset;
+    color: wheat;
+    font-family: Verdana, Tahoma;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#alert-header {
+    width: 98%;
+    height: 40px;
+    background-color: royalblue;
+    border-style: ridge;
+    padding: 5px 0px;
+    border-color: slateblue;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    text-align: center;
+    font-size: 30px;
+}
+
+#alert-header>p {
+    margin: 0px auto;
+}
+
+#alert-body {
+    padding: 20px 0px;
+    width: 98%;
+    height: 80px;
+    background-color: powderblue;
+    border-color: slateblue;
+    border-style: ridge;
+    border-top-style: unset;
+    border-bottom-style: unset;
+    font-family: 'Segoe UI';
+    font: size 16px;
+    color: royalblue;
+
+}
+
+#alert-footer {
+    display: flex;
+    flex-direction: row;
+    width: 98%;
+    height: 40px;
+    background-color: royalblue;
+    border-style: ridge;
+    border-color: slateblue;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+#alert-footer>p {
+    display: block;
+    width: max-content;
+}
+
+/*fullscreen button styling*/
+#full-butt-base {
+    width: 40px;
+    height: 40px;
+    background-color: royalblue;
+    position: absolute;
+    border-radius: 2px;
+    left: 50%;
+    transform: translate(-50%);
+    border-color: steelblue;
+    border-style: outset;
+}
+
+#full-butt-main {
+    width: 25px;
+    height: 25px;
+    border-color: wheat;
+    border-style: solid;
+    border-width: thick;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#full-butt-vert {
+    background-color: royalblue;
+    position: absolute;
+    width: 40%;
+    height: 40px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#full-butt-hori {
+    background-color: royalblue;
+    position: absolute;
+    width: 40px;
+    height: 40%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+}
+
+#full-butt-overlay {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+
+/*scale down button styling*/
+#scale-down-base {
+    width: 40px;
+    height: 40px;
+    background-color: royalblue;
+    border-radius: 2px;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+    border-color: steelblue;
+    border-style: outset;
+}
+
+#scale-down-minus {
+    width: 80%;
+    height: 20%;
+    background-color: wheat;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/*scale up button styling*/
+#scale-up-base {
+    width: 40px;
+    height: 40px;
+    background-color: royalblue;
+    position: absolute;
+    border-radius: 2px;
+    border-style: outset;
+    border-color: steelblue;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+#scale-up-hori {
+    width: 80%;
+    height: 20%;
+    background-color: wheat;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#scale-up-vert {
+    width: 20%;
+    height: 80%;
+    background-color: wheat;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/*game toolbar styling*/
+#tool-base {
+    left: 100%;
+    top: 50%;
+    margin: auto 0px;
+    width: 50px;
+    height: 400px;
+    position: absolute;
+    display: flex;
+    flex-direction: column-reverse;
+    background-color: darkblue;
+    flex-wrap: nowrap;
+    border-radius: 3px;
+    border-style: inset;
+    border-color: steelblue;
+    transform: translate(-120%, -30%);
+}
+
+#tool-base>div {
+    margin: 0px 0px;
+    width: inherit;
+    height: 50px;
+}
+
+#tool-fullscreen {
+    height: 50px;
+}
+
+#tool-scaleUp {
+    height: 50px;
+}
+
+#tool-scaleDown {
+    height: 50px;
+}
+
+/*loading screen*/
+#load-blank {
+    top: 0px;
+    left: 0px;
+    position: absolute;
+    opacity: 0.7;
+    width: inherit;
+    height: inherit;
+    background-color: black;
+
+}
+
+#load-main {
+    position: absolute;
+    width: 70%;
+    top: 50%;
+    left: 50%;
+    max-width: 600px;
+    /*min-width: 400px;*/
+    height: 500px;
+    transform: translate(-50%, -50%);
+}
+
+#load-main>div {
+    position: relative;
+}
+
+#load-header {
+    height: 20%;
+    background-color: cyan;
+    font-size: 50px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    text-align: center;
+}
+
+#load-body {
+
+    height: 60%;
+    background-color: crimson;
+
+}
+
+#load-footer {
+    height: 20%;
+    background-color: chocolate;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+}
+
+#load-header>img {
+    position: relative;
+    z-index: 2;
+}
+
+#load-bar-static {
+    z-index: 2;
+    position: inherit;
+    left: 2%;
+    width: 80%;
+    height: 30px;
+    background-color: darkblue;
+    border-radius: 10px;
+    transform: translate(12%);
+
+
+}
+
+#load-bar-move {
+    width: 0%;
+    position: inherit;
+    height: 30px;
+    background-color: green;
+    border-radius: inherit;
+    animation-name: load;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    animation-duration: 3s;
+    animation-timing-function: ease-out;
+}
+
+#load-bar-base {
+    top: 90%;
+    position: inherit;
+    width: 100%;
+    height: 30px;
+    border-radius: inherit;
+}
+
+/*main menu*/
+
+#main-menu-butt {
+    position: relative;
+    z-index: 11;
+    width: 50px;
+    height: 50px;
+    background-color: lawngreen;
+}
+
+#menu-center {
+    position: inherit;
+    z-index: 12;
+    background: white;
+    width: 50%;
+    height: 5px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#menu-center::after {
+    position: inherit;
+    display: block;
+    content: " ";
+    background: white;
+    top: 50%;
+    width: 100%;
+    height: 100%;
+}
+
+#menu-center::before {
+    position: inherit;
+    display: block;
+    content: " ";
+    background: white;
+    top: -150%;
+    width: 100%;
+    height: 100%;
+}
+
+#main-menu-base {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+#main-menu-main {
+    position: relative;
+    width: 50%;
+    top: 50%;
+    left: 50%;
+    height: auto;
+    background-color: rgb(1, 23, 225);
+    height: 500px;
+    transform: translate(-50%, -50%);
+}
+
+#main-menu-header {
+    position: relative;
+    width: 100%;
+    background-color: red;
+    height: 20%;
+    display: flex;
+    flex-direction: row;
+}
+
+#main-menu-header {
+    position: relative;
+    width: 100%;
+    background-color: red;
+    height: 20%;
+
+}
+
+#main-menu-body {
+    position: relative;
+    width: 100%;
+    height: 70%;
+    background-color: rosybrown;
+
+}
+
+#main-menu-footer {
+    position: relative;
+    width: 100%;
+    height: 10%;
+    background-color: green;
+}
+
+#main-menu-tool {
+    position: relative;
+    display: flex;
+    flex-direction: row-reverse;
+    top: 10px;
+    left: 0%;
+    width: 55%;
+    height: 80%;
+    background-color: green;
+    left: 10px;
+}
+
+.main-menu-tool-hover:hover {
+    background-color: rebeccapurple;
+}
+
+.main-menu-tool-hover {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    background-color: chartreuse;
+    margin: 0px 10px;
+    margin-top: 30px;
+}
+
+#main-menu-user {
+    position: relative;
+    top: 10px;
+    width: 40%;
+    height: 80%;
+    background-color: green;
+}
+
+#main-menu-user-name {
+    width: 100%;
+    height: 40%;
+    background-color: chocolate;
+}
+
+#main-menu-user-name>p {
+    display: inline;
+}
+
+#main-menu-user-alli {
+    background-color: darksalmon;
+    width: 100%;
+    height: 40%;
+    margin: 0px;
+}
+
+#main-menu-user-level {
+    width: 100%;
+    height: 20%;
+    background-color: darkslategray;
+
+}
+
+#main-menu-user-name>label {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-weight: 500;
+    width: 20%;
+    height: 100%;
+    text-align: justify;
+    font-size: 20px;
+}
+
+#main-menu-user-alli>label {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-weight: bolder;
+    width: 20%;
+    height: 100%;
+    text-align: justify;
+    font-size: 20px;
+}
+
+#main-menu-user-level>label {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-weight: lighter;
+    width: 20%;
+    height: 100%;
+    text-align: justify;
+    font-size: 16px;
+}
+
+span {
+    position: inherit;
+    left: 100%;
+    transform: translate(-100%);
+}
+
+/*community tab of main menu*/
+
+#community-base {
+    position: absolute;
+    width: inherit;
+    height: 100%;
+}
+
+#community-main {
+    position: relative;
+    width: 90%;
+    left: 50%;
+    height: inherit;
+    background-color: rgb(1, 23, 225);
+    transform: translate(-50%);
+}
+
+#community-table-header {
+    position: relative;
+    width: 100%;
+    height: 10%;
+    background-color: rebeccapurple;
+    display: flex;
+    flex-direction: row;
+}
+
+#community-header-name {
+    position: relative;
+    width: 30%;
+    background-color: red;
+}
+
+#community-header-alli {
+    position: relative;
+    width: 55%;
+    background-color: green;
+}
+
+#community-header-bases {
+    position: relative;
+    width: 15%;
+    background-color: lightcoral;
+}
+
+#community-table {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 80%;
+    background-color: lime;
+    overflow-y: scroll;
+}
+
+#community-footer {
+    width: 100%;
+    height: 20%;
+    background-color: rebeccapurple;
+    display: flex;
+    flex-direction: row;
+}
+
+#community-footer-wrapper {
+    position: relative;
+    height: 40px;
+    left: 50%;
+    top: 50%;
+    background-color: goldenrod;
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+    transform: translate(-50%, -50%);
+}
+
+.community-raw {
+    background-color: royalblue;
+    width: 60px;
+    height: 40px;
+    margin: 0px 4%;
+    text-overflow: ellipsis;
+    font-size: 90%;
+    font-variant: small-caps;
+    text-align: center;
+}
+
+.player-card {
+    display: block;
+    width: 100%;
+    height: 30px;
+    margin: 5px auto;
+    background-color: blue;
+    display: flex;
+    flex-direction: row;
+}
+
+.player-name {
+    width: 30%;
+    height: inherit;
+}
+
+.player-alliance {
+    width: 55%;
+    height: inherit;
+}
+
+.player-bases {
+    width: 15%;
+    height: inherit;
+}
+
+/*alliance tab of main men*/
+#alliance-base {
+    position: absolute;
+    width: inherit;
+    height: 100%;
+}
+
+#alliance-main {
+    position: relative;
+    width: 90%;
+    left: 50%;
+    height: inherit;
+    background-color: rgb(1, 23, 225);
+    transform: translate(-50%);
+}
+
+#alliance-header {
+    position: relative;
+    width: 100%;
+    height: 10%;
+    background-color: rebeccapurple;
+    display: flex;
+    flex-direction: row;
+}
+
+#alliance-body {
+    position: relative;
+    width: 100%;
+    height: 70%;
+    background-color: lime;
+    overflow-y: scroll;
+}
+
+#alliance-footer {
+    width: 100%;
+    height: 20%;
+    background-color: rebeccapurple;
+    display: flex;
+    flex-direction: row;
+}
+
+/*alli tab*/
+#alli-base {
+    position: absolute;
+    width: inherit;
+    height: 100%;
+}
+
+#alli-main {
+    position: relative;
+    width: 90%;
+    left: 50%;
+    height: inherit;
+    background-color: rgb(1, 23, 225);
+    transform: translate(-50%);
+}
+
+#alli-header {
+    position: relative;
+    width: 100%;
+    height: 10%;
+    background-color: rebeccapurple;
+    display: flex;
+    flex-direction: row;
+}
+
+#alli-body {
+    position: relative;
+    width: 100%;
+    height: 70%;
+    background-color: lime;
+}
+
+#alli-body-table {
+    color: aliceblue;
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: cyan;
+    overflow-y: scroll;
+}
+
+#alli-body-table-head {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    background-color: blue;
+    display: flex;
+    flex-direction: row;
+}
+
+#alli-body-table-head-name {
+    background-color: transparent;
+    width: 50%;
+    height: 100%;
+}
+
+#alli-body-table-head-memberNo {
+    background-color: transparent;
+    width: 25%;
+    height: 100%;
+    text-align: center;
+}
+
+#alli-body-table-head-bases {
+    background-color: transparent;
+    width: 25%;
+    height: 100%;
+    text-align: center;
+}
+
+#alli-footer {
+    width: 100%;
+    height: 20%;
+    background-color: rebeccapurple;
+    display: flex;
+    flex-direction: row;
+}
+
+.alliance-card {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    margin: 5px auto;
+    background-color: blue;
+    display: flex;
+    flex-direction: row;
+}
+
+.alliance-name {
+    width: 50%;
+    height: inherit;
+}
+
+.alliance-memberNo {
+    width: 25%;
+    height: inherit;
+    text-align: center;
+}
+
+.alliance-bases {
+    width: 25%;
+    height: inherit;
+    text-align: center;
+}
+
+/*help tab of main menu*/
+#help-base {
+    position: absolute;
+    width: inherit;
+    height: 100%;
+}
+
+#help-main {
+    position: relative;
+    width: 90%;
+    left: 50%;
+    height: inherit;
+    background-color: rgb(1, 23, 225);
+    transform: translate(-50%);
+}
+
+#help-header {
+    position: relative;
+    width: 100%;
+    height: 10%;
+    background-color: rebeccapurple;
+    display: flex;
+    flex-direction: row;
+}
+
+#help-body {
+    position: relative;
+    width: 100%;
+    height: 70%;
+    background-color: lime;
+    overflow-y: scroll;
+}
+
+#help-footer {
+    width: 100%;
+    height: 20%;
+    background-color: rebeccapurple;
+    display: flex;
+    flex-direction: row;
+}
+
+/*option tab of main men*/
+#option-base {
+    position: absolute;
+    width: inherit;
+    height: 100%;
+}
+
+#option-main {
+    position: relative;
+    width: 90%;
+    left: 50%;
+    height: inherit;
+    background-color: rgb(1, 23, 225);
+    transform: translate(-50%);
+}
+
+#option-header {
+    position: relative;
+    width: 100%;
+    height: 10%;
+    background-color: rebeccapurple;
+    display: flex;
+    flex-direction: row;
+}
+
+#option-body {
+    position: relative;
+    width: 100%;
+    height: 70%;
+    background-color: lime;
+    overflow-y: scroll;
+}
+
+#option-footer {
+    width: 100%;
+    height: 20%;
+    background-color: rebeccapurple;
+    display: flex;
+    flex-direction: row;
+}
+
+#alli-card-base {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+#alli-card-members-base {
+    width: 60%;
+    height: 100%;
+    background-color: transparent;
+}
+
+#alli-card-members {
+    width: auto;
+    height: auto;
+
+}
+
+#alli-card-info {
+    color: aliceblue;
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    height: 100%;
+}
+
+#alli-card-info-name {
+    width: 90%;
+    height: auto;
+    margin: 5px auto;
+    min-height: 30px;
+    background-color: black;
+}
+
+#alli-card-info-desc {
+    width: 90%;
+    height: auto;
+    margin: 20px auto;
+    background-color: black;
+    min-height: 100px;
+    word-wrap: break-word;
+
+}
+
+#alli-card-info-admin {
+    width: 90%;
+    height: 150px;
+    margin: 5px auto;
+    min-height: 40px;
+    background-color: black;
+}
+#alli-card-info-join-butt{
+    width: auto;
+    height: auto;
+    margin: 0px auto;
+    background-color: black;
+}
+#alli-card-members-table {
+    margin-top: 10%;
+    width: 100%;
+    height: 90%;
+    color: white;
+
+}
+
+#alli-card-members-head {
+    display: inline-flex;
+    width: 100%;
+    height: 30px;
+    background-color: black;
+
+}
+
+#alli-card-members-head-name {
+    display: inherit;
+    width: 70%;
+    height: 100%;
+}
+
+#alli-card-members-head-bases {
+    display: inherit;
+    width: 30%;
+    height: 100%;
+}
+
+#alli-card-members-body {
+    display: block;
+    width: 100%;
+    height: 95%;
+    overflow-y: scroll;
+    scrollbar-width: 5px;
+}
+#alli-card-members-body>tr {
+    display: flex;
+    flex-direction: row;
+    width: 90%;
+    margin: 5px auto;
+    float: center;
+    background-color: blue;
+    border-radius: 5px;
+}
+.member-name{
+    height: inherit;
+    display: block;
+    margin: 5px 0px;
+    width:100%;
+}
+#create-alli-butt {
+    position: sticky;
+    display: block;
+    text-align: center;
+    width: 90%;
+    margin: 5px auto;
+    background-color: blue;
+    height: auto;
+}
+#create-alli-butt:hover {
+    text-decoration: underline;
+
+}
+.name {
+    margin-left: 5%;
+    display: block;
+    width: 65%;
+    height: auto;
+    text-align: justify;
+}
+
+.bases {
+    display: block;
+    width: 30%;
+    margin-left: auto;
+    height: auto;
+    text-align: center;
+}
+
+label {
+    display: block;
+    font-size: large;
+}
+
+#create-alli-form {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+#create-alli-wrapper-name {
+    position: relative;
+    top: 10%;
+    width: 100%;
+}
+
+#create-alli-input-name {
+    position: relative;
+    top: 10%;
+    width: 60%;
+    margin: 0px auto;
+}
+
+#create-alli-wrapper-desc {
+    position: relative;
+    top: 20%;
+    width: 100%;
+    margin: 0px auto;
+}
+
+#create-alli-input-desc {
+    height: 100px;
+    width: 60%;
+    margin: 0px auto;
+}
+
+#create-alli-input-submit {
+    position: relative;
+    display: block;
+    width: 20%;
+    top: 40%;
+    margin: 0px auto;
+}
+
+/*for modifying app on mobile*/
+@media screen and(max-width:400px) {
+    #load-header {
+        height: 20%;
+        background-color: cyan;
+        font-size: 20px;
+        text-align: center;
+    }
+}
+
+/*animation section*/
+@keyframes load {
+    0% {
+        width: 0%;
+    }
+
+    40% {
+        width: 100%;
+        left: 0%;
+    }
+
+    70% {
+        width: 0%;
+        left: 100%;
+    }
+
+}
