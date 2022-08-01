@@ -1,5 +1,4 @@
 //////server global variables////
-const sql = require('mysql')
 const sessionHandler = require('express-session');
 const resHandler = require('./resHandler');
 const crypto = require('crypto');
@@ -7,15 +6,13 @@ const db = require('./db')
 const cookie = require('cookie');
 const express = require('express');
 const app = express();
-require('mysql2')
+const http = require('http').createServer(app)
 const mysqlStore = require('express-mysql-session')(sessionHandler);
-const http = require('http').createServer(app);
 const port = process.env.PORT || 3000;
 const io = require('socket.io').Server;
-var mysql = require('mysql2');
+const mysql = require('mysql2');
 const cookieParser = require('cookie-parser');
 var conn = mysql.createConnection(db.users);
-console.log(__dirname);
 conn.connect(function (err) {
     if (err) console.log('1st err', err);
     console.log(" mysql Connected!");
@@ -49,7 +46,7 @@ function hash(data) {
     return crypto.createHash('sha512').update(data).digest('hex')
 }
 ///binds server to a port
-http.listen(port, function () {
+app.listen(port, function () {
     console.log('listening on port' + port);
 });
 let config = {
@@ -59,7 +56,8 @@ let config = {
     cookie: { maxAge: 3600000, secure: false, httpOnly: true, secure: false },
     store:sessionStore
 }
-app.use(sessionHandler(config))
+hash('123');
+app.use(sessionHandler(config));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '4kb' }));
@@ -78,7 +76,7 @@ app.post('/login', function (req, res) {
             res.cookie('name', req.body.username, { maxAge: new Date(Date.now() + 360000), overwrite: true });
             if (hasBase(req.body.username)) return;
             addBase({ name: req.body.username, alliance: '', level: 0, id: results[0].userId }, gen.next().value)
-            res.redirect('./game.html')
+            res.redirect('./game.html');
         }
     });
 });
@@ -97,8 +95,8 @@ app.post('/signup', function (req, res) {
             req.session.authenticated = true;
             req.session.name = req.body.username;
             res.cookie('sessId', req.sessionID,{httpOnly:true,maxAge:1000*60*60*24});
-            res.redirect('./game.html')
             res.cookie('name', req.body.username, { maxAge: 360000, overwrite: true });
+            res.redirect('./game.html')
             addBase({ name: req.body.username, alliance: '', level: 0 }, gen.next().value);
             console.log('new user ::: ',req.body.username);
         }
