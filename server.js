@@ -13,7 +13,6 @@ const io = require('socket.io').Server;
 var mysql = require('mysql');
 const cookieParser = require('cookie-parser');
 var conn = mysql.createConnection(db.users);
-console.log(db.sessionConfig);
 conn.connect(function (err) {
     if (err) throw err;
     console.log("Connected!");
