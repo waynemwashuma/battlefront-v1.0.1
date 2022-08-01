@@ -10,7 +10,7 @@ const mysqlStore = require('express-mysql-session')(sessionHandler);
 const http = require('http').createServer(app);
 const port = process.env.PORT || 3000;
 const io = require('socket.io').Server;
-var mysql = require('mysql');
+var mysql = require('mysql2');
 const cookieParser = require('cookie-parser');
 var conn = mysql.createConnection(db.users);
 console.log(__dirname);
