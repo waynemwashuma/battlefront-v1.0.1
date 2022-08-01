@@ -1,8 +1,8 @@
 let login ={
-  host: process.env.MYSQLHOST,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database:process.env.MYSQLDATABASE
+  host: process.env.MYSQLHOST || '127.0.0.1',
+  user: process.env.MYSQLUSER || 'root',
+  password: process.env.MYSQLPASSWORD || '',
+  database:process.env.MYSQLDATABASE || 'BFlogin'
 }
 let sess = {
   expiration:1000*60*60*6,
@@ -15,10 +15,10 @@ let sess = {
           data:'data'
       }
   },
-  host:process.env.MYSQLHOST,
-  user: process.env.MYSQLUSER,
-  password: process.env.MYSQLPASSWORD,
-  database:process.env.MYSQLDATABASE
+  host:process.env.MYSQLHOST || '127.0.0.1',
+  user: process.env.MYSQLUSER || 'root',
+  password: process.env.MYSQLPASSWORD || '',
+  database:process.env.MYSQLDATABASE ||'BFlogin'
 }
 module.exports.users = login;
 module.exports.sessionConfig = sess;

@@ -12,9 +12,12 @@ const port = process.env.PORT || 3000;
 const io = require('socket.io').Server;
 var mysql = require('mysql');
 const cookieParser = require('cookie-parser');
-const sessConn = mysql.createConnection(db.users);
-var sessionStore = new mysqlStore(db.sessionConfig);
-
+var conn = mysql.createConnection(db.users);
+conn.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected!");
+});
+const sessionStore = new mysqlStore(db.sessionConfig,conn);
 app.use(sessionHandler({
     key:'keyin',
     secret:'hgvdsuv83rvuy3vaea',
@@ -22,11 +25,6 @@ app.use(sessionHandler({
     saveUninitialized:true,
     store:sessionStore
 }))
-var conn = mysql.createConnection(db.users);
-conn.connect(function (err) {
-    if (err) throw err;
-    console.log("Connected!");
-});
 const server = new io(http, {
     cors: {
         origin: []
@@ -237,7 +235,7 @@ server.on('connection', socket => {
         if (typeof sid.sessId === "undefined") {
             console.log('no session made');
         } else {
-            sessConn.query('SELECT * FROM sessions WHERE sessId=?',[sid.sessId],(err,results)=>{
+            conn.query('SELECT * FROM sessions WHERE sessId=?',[sid.sessId],(err,results)=>{
                 if (!err) {
                     if (!results.length) return console.log('session is invalid');
                     sd = JSON.parse(results[0].data);
