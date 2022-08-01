@@ -13,13 +13,12 @@ const io = require('socket.io').Server;
 var mysql = require('mysql');
 const cookieParser = require('cookie-parser');
 var conn = mysql.createConnection(db.users);
-const sesscon = mysql.createConnection(db.users)
 console.log(__dirname);
 conn.connect(function (err) {
     if (err) console.log(err.message);
     console.log(" mysql Connected!");
 });
-const sessionStore = new mysqlStore(db.sessionConfig,sesscon);
+const sessionStore = new mysqlStore(db.sessionConfig);
 app.use(sessionHandler({
     key:'keyin',
     secret:'hgvdsuv83rvuy3vaea',
