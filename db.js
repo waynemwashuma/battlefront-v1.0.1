@@ -15,12 +15,7 @@ let sess = {
           expires:'expires',
           data:'data'
       }
-  },
-  host:process.env.MYSQLHOST || '127.0.0.1',
-  user: process.env.MYSQLUSER2 || 'root',
-  password: process.env.MYSQLPASSWORD2 || '',
-  database:process.env.MYSQLDATABASE ||'BFlogin',
-  port:process.env.MYSQLPORT
+  }
 }
 module.exports.users = login;
 module.exports.sessionConfig = sess;
