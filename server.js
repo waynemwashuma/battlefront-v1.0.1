@@ -7,6 +7,7 @@ const db = require('./db')
 const cookie = require('cookie');
 const express = require('express');
 const app = express();
+require('mysql2/promise')
 const mysqlStore = require('express-mysql-session')(sessionHandler);
 const http = require('http').createServer(app);
 const port = process.env.PORT || 3000;
