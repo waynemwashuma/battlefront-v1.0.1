@@ -179,7 +179,7 @@ app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/login.html')
 })
-app.use('/',express.static('./app/public'));
+app.use('/',express.static('./public'));
 ///////global game variables///
 var codes = {
     actioncodes: {
