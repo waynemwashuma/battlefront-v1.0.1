@@ -7,7 +7,7 @@ const db = require('./db')
 const cookie = require('cookie');
 const express = require('express');
 const app = express();
-require('mysql2/promise')
+require('mysql2')
 const mysqlStore = require('express-mysql-session')(sessionHandler);
 const http = require('http').createServer(app);
 const port = process.env.PORT || 3000;
@@ -20,7 +20,7 @@ conn.connect(function (err) {
     if (err) console.log('1st err', err);
     console.log(" mysql Connected!");
 });
-const sessionStore = new mysqlStore(db.sessionConfig,conn);
+const sessionStore = new mysqlStore(db.sessionConfig,conn.promise());
 app.use(sessionHandler({
     key:'keyin',
     secret:'hgvdsuv83rvuy3vaea',
