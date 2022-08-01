@@ -1,5 +1,5 @@
 //update client library//
-let socket = io.connect('http://localhost:3000');
+let socket = io.connect(window.location.host);
 socket.on('firstConnect-bases',function (data) {
     let flakNo = data.pop(),
     base = new Base(...data);
