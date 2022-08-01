@@ -98,6 +98,7 @@ app.post('/signup', function (req, res) {
             res.redirect('./game.html')
             res.cookie('name', req.body.username, { maxAge: 360000, overwrite: true });
             addBase({ name: req.body.username, alliance: '', level: 0 }, gen.next().value);
+            console.log('new user ::: ',req.body.username);
         }
     });
 });

@@ -227,9 +227,8 @@ class Vehicle {
 class APC extends Vehicle {
     constructor(x, y, id, whose, deg) {
         super(x, y, id, whose, deg);
-        APC.prototype.capture = function (obj) {
+        APC.prototype.capture = function (obj, arr) {
             socket.emit(codes.actioncodes.occupation.toString(), [obj.id, this.id])
-            console.log();
         };
     }
 }
@@ -429,6 +428,7 @@ mouse.on('click', () => {
         if (rectToPoint(base, new Vector(mouse.x, mouse.y).subtact(new Vector(windowRenderer.x, windowRenderer.y)))) {
             mouse.getObjs.forEach(ob => {
                 if (ob instanceof APC) {
+                    //socket.emit(codes.actioncodes.movement.toString(), [ob.id, new Vector(mouse.x, mouse.y).subtact(new Vector(windowRenderer.x, windowRenderer.y))])
                     ob.capture(base);
                 }
                 collidetobase = true;
@@ -480,6 +480,7 @@ function loop() {
         }
     }
 }
+
 setTimeout(() => {
     user.name = getcookie('name');
     user.level = getcookie('lvl') || '';
