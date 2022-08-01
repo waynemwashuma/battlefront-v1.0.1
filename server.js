@@ -47,7 +47,7 @@ function hash(data) {
     return crypto.createHash('sha512').update(data).digest('hex')
 }
 ///binds server to a port
-app.listen(port, function () {
+http.listen(port, function () {
     console.log('listening on port' + port);
 });
 let config = {
