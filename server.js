@@ -40,7 +40,7 @@ function Client(sessid, uid, name, socketid) {
     this.online = true;
     this.lastOnline = null;
     this.lastlogin = null;
-    this.resHandler = new resHandler();
+    this.resHandler = new resHandler.ResHandler();
     this.socketid = socketid;
 }
 function hash(data) {
@@ -79,6 +79,7 @@ app.post('/login', function (req, res) {
             addBase({ name: req.body.username, alliance: '', level: 0, id: results[0].userId }, gen.next().value)
             res.redirect('./game.html');
         }
+        if(err)console.log(err.message);
     });
 });
 app.post('/signup', function (req, res) {
@@ -92,7 +93,7 @@ app.post('/signup', function (req, res) {
             if (results.length) return res.send('username or email taken');
             conn.query("INSERT INTO users(userName,userMail,userPwd) VALUES (?,?,?)", [
                 req.body.username, req.body.email, hashpwd
-            ]);
+            ],err=>console.log(err.message));
             req.session.authenticated = true;
             req.session.name = req.body.username;
             res.cookie('sessId', req.sessionID,{httpOnly:true,maxAge:1000*60*60*24});
@@ -101,6 +102,7 @@ app.post('/signup', function (req, res) {
             addBase({ name: req.body.username, alliance: '', level: 0 }, gen.next().value);
             console.log('new user ::: ',req.body.username);
         }
+        if(err)console.log(err.message);
     });
 });
 app.post('/createAlliance', function (req, res) {
@@ -113,7 +115,7 @@ app.post('/createAlliance', function (req, res) {
             conn.query("INSERT INTO alliances(name,desciption,members,bases) VALUES (?,?,?,?)", [
                 req.body.alliname, req.body.desc, `leader=${req.session.uname};`, 1
             ], (err) => {
-                if (err) return;
+                if (err) console.log(err.message);;
                 res.redirect('./game.html');
             })
         }
@@ -197,32 +199,7 @@ var codes = {
         base: 500
     }
 }
-var initialProductionCost = {
-    tank: {
-        steel: 45000,
-        aluminium: 30000
-    },
-    APC: {
-        steel: 65000,
-        aluminium: 100000
-    },
-    flak: {
-        concrete: 45000,
-        steel: 20000
-    }
-};
-function deductFromRes(socketid, objString) {
-    for (const value of clients.values()) {
-        if (value.socketid === socketid) {
-            let c = Object.keys(initialProductionCost[objString]);
-            for (let i = 0; i < c.length; i++) {
-                value.resHandler.res.actual[c[i]] -= initialProductionCost[objString][c[i]];
-            }
-            return true
-        }
-    }
-    return false
-}
+
 server.use((socket, next) => {
     if (typeof socket.handshake.headers.cookie !== "string") next(new Error('unathorized'));
     if (!cookie.parse(socket.handshake.headers.cookie).sessId) {
@@ -276,20 +253,20 @@ server.on('connection', socket => {
     })
     socket.on(codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(), e => {
         if (!gameLib.bases.has(e)) return;
-        deductFromRes(socket.id, 'tank')
         if (!validateObjBelongToSender(gameLib.bases.get(e), socket.id)) return;
+        resHandler.deductFromRes(clients,socket.id, 'tank')
         creations.push(new CreationCard(codes.objcodes.tank, gameLib.bases.get(e)))
     });
     socket.on(codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(), e => {
         if (!gameLib.bases.has(e)) return;
-        deductFromRes(socket.id, 'APC')
         if (!validateObjBelongToSender(gameLib.bases.get(e), socket.id)) return;
+        resHandler.deductFromRes(clients,socket.id, 'APC')
         creations.push(new CreationCard(codes.objcodes.APC, gameLib.bases.get(e)))
     });
     socket.on(codes.objcodes.flak.toString() + codes.actioncodes.creation.toString(), e => {
-        deductFromRes(socket.id, 'flak');
         if (!gameLib.bases.has(e)) return;
-        if (!validateObjBelongToSender(gameLib.bases.get(e), socket.id)) return;
+        if (!validateObjBelongToSender(gameLib.bases.get(e), socket.id))return;
+        resHandler.deductFromRes(clients,socket.id, 'APC');
         creations.push(new CreationCard(codes.objcodes.flak, gameLib.bases.get(e)))
     });
     socket.on(codes.actioncodes.movement.toString(), e => {

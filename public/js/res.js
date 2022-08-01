@@ -1,7 +1,6 @@
 let creations = [];
 function ResHandler(initres) {
     this.lastLogin = logintime - 100000;
-    let productionTime = 10000;
     this.res = {
             concrete: 400,
             steel: 3564,
@@ -27,7 +26,6 @@ function ResHandler(initres) {
     };
     setInterval(updateUI(this), 100);
 }
-
 let r = new ResHandler();
 socket.on('res-update',data=>{
     r.res = data;
@@ -153,32 +151,6 @@ let baseMenu = new (function Menu() {
     c[3].addEventListener('click', clickbutton(this));
     c[3].addEventListener('mousemove', movebutton(this))
 })();
-
-///initialize the base menu////
-// mouse.on('click', () => {
-//     let t = false;
-//     gameLib.bases.forEach(b => {
-//         if (
-//             mouse.x > b.pos.x &&
-//             mouse.x < b.pos.x + b.w &&
-//             mouse.y > b.pos.y &&
-//             mouse.y < b.pos.y + b.h
-//         ) {
-//             baseMenu.init(b);
-//             t = true;
-//         }
-//     });
-//     if (!t) baseMenu.remove();
-
-// })
-
-
-
-
-
-
-
-
 function CreationCard(objcode, base) {
     this.x = base.spawnPoint.x;
     this.y = base.spawnPoint.y;

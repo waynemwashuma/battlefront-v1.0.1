@@ -1,3 +1,0 @@
-function xhr(url) {
-    
-}

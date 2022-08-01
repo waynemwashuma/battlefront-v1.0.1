@@ -1,4 +1,18 @@
 let keys;
+var initialProductionCost = {
+    tank: {
+        steel: 45000,
+        aluminium: 30000
+    },
+    APC: {
+        steel: 65000,
+        aluminium: 100000
+    },
+    flak: {
+        concrete: 45000,
+        steel: 20000
+    }
+};
 function ResHandler(initres) {
     this.res = {
         max: {
@@ -33,5 +47,18 @@ function ResHandler(initres) {
         callback(this.res.actual);
     }
 }
-
-module.exports = ResHandler;
+function deductFromRes(clients,socketid, objString) {
+    for (const value of clients.values()) {
+        if (value.socketid === socketid) {
+            let c = Object.keys(initialProductionCost[objString]);
+            for (let i = 0; i < c.length; i++) {
+                value.resHandler.res.actual[c[i]] -= initialProductionCost[objString][c[i]];
+            }
+            return true
+        }
+    }
+    return false
+}
+module.exports.ResHandler = ResHandler;
+module.exports.initialProductionCosts = initialProductionCost;
+module.exports.deductFromRes = deductFromRes;

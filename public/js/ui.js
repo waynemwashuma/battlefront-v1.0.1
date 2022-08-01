@@ -1,6 +1,6 @@
-function createElement(tag, options ={}) {
+function createElement(tag, options = {}) {
     e = document.createElement(tag);
-    if(options.id)e.id = options.id;
+    if (options.id) e.id = options.id;
     if (options.class) {
         e.className = options.class;
     }
@@ -50,11 +50,10 @@ alert = (function () {
         for (let i = 3; i < divs.length; i++) {
             divs[i].innerHTML = "";
         }
-
         document.body.append(divs[0])
         writeParagraph(divs[3], header);
         writeParagraph(divs[4], body);
-        divs[5].append(butt)
+        divs[5].append(butt);
     }
 })();
 var gameToolbar = (function () {
@@ -171,11 +170,11 @@ let mainMenu = (function () {
             header: createElement('div', { id: 'alli-header' }),
             body: createElement('div', { id: 'alli-body' }),
             footer: createElement('div', { id: 'alli-footer' }),
-            bodyTable:createElement('table',{id:'alli-body-table'}),
-            bodyTableHead:createElement('tr',{id:'alli-body-table-head'}),
-            bodyTableName:createElement('td',{id:'alli-body-table-head-name'}),
-            bodyTableMembers:createElement('td',{id:'alli-body-table-head-memberNo'}),
-            bodyTableBases:createElement('td',{id:'alli-body-table-head-bases'}),
+            bodyTable: createElement('table', { id: 'alli-body-table' }),
+            bodyTableHead: createElement('tr', { id: 'alli-body-table-head' }),
+            bodyTableName: createElement('td', { id: 'alli-body-table-head-name' }),
+            bodyTableMembers: createElement('td', { id: 'alli-body-table-head-memberNo' }),
+            bodyTableBases: createElement('td', { id: 'alli-body-table-head-bases' }),
         },
         optionContent = {
             base: createElement('div', { id: 'option-base' }),
@@ -225,7 +224,7 @@ let mainMenu = (function () {
     alliContent.bodyTableMembers.append(document.createTextNode('Members'))
     alliContent.bodyTableBases.append(document.createTextNode('Bases'))
     let createAliiButt = alliContent.bodyTable.appendChild(document.createElement('tr'))
-    createAliiButt.setAttribute('id','create-alli-butt')
+    createAliiButt.setAttribute('id', 'create-alli-butt')
     createAliiButt.append(document.createTextNode('Create alliance.'))
     //arranges nodes of alliance tab//
     helpContent.base.append(helpContent.main);
@@ -239,66 +238,70 @@ let mainMenu = (function () {
     optionContent.main.append(optionContent.body);
     optionContent.main.append(optionContent.footer);
     let allianceCard = document.createElement('div');
-    allianceCard.setAttribute('id','alli-card-base');
+    allianceCard.setAttribute('id', 'alli-card-base');
 
     ////////alliance card/////
     let memberBase = allianceCard.appendChild(document.createElement('div'));
-    memberBase.setAttribute('id','alli-card-members-base');
+    memberBase.setAttribute('id', 'alli-card-members-base');
     let members = memberBase.appendChild(document.createElement('table'));
-    members.setAttribute('id','alli-card-members-table');
+    members.setAttribute('id', 'alli-card-members-table');
     let membersHead = members.appendChild(document.createElement('th'));
-    membersHead.setAttribute('id','alli-card-members-head');
+    membersHead.setAttribute('id', 'alli-card-members-head');
     let memberName = membersHead.appendChild(document.createElement('td'));
-    memberName.setAttribute('id','alli-card-members-head-name');
+    memberName.setAttribute('id', 'alli-card-members-head-name');
     memberName.append(document.createTextNode('Name'));
     let memberBases = membersHead.appendChild(document.createElement('td'));
-    memberBases.setAttribute('id','alli-card-members-head-bases');
+    memberBases.setAttribute('id', 'alli-card-members-head-bases');
     memberBases.append(document.createTextNode('Bases'));
     let memberBody = members.appendChild(document.createElement('tbody'));
-    memberBody.setAttribute('id','alli-card-members-body');
+    memberBody.setAttribute('id', 'alli-card-members-body');
     let info = allianceCard.appendChild(document.createElement('div'));
-    info.setAttribute('id','alli-card-info');
+    info.setAttribute('id', 'alli-card-info');
     let infoName = info.appendChild(document.createElement('div'));
-    infoName.setAttribute('id','alli-card-info-name');
+    infoName.setAttribute('id', 'alli-card-info-name');
     let infoDesc = info.appendChild(document.createElement('div'));
-    infoDesc.setAttribute('id','alli-card-info-desc');
+    infoDesc.setAttribute('id', 'alli-card-info-desc');
     let infoAdmin = info.appendChild(document.createElement('div'));
+    infoAdmin.setAttribute('id', 'alli-card-info-admin')
+    let joinAllianceButt = info.appendChild(document.createElement('div'));
+    joinAllianceButt.setAttribute('id', 'alli-card-info-join-butt')
+    joinAllianceButt.innerHTML = 'Join';
+
     //////player card//////---design later----
     let playerBase = allianceCard.appendChild(document.createElement('div'));
-    playerBase.setAttribute('id','player-card-base');
+    playerBase.setAttribute('id', 'player-card-base');
     let playername = allianceCard.appendChild(document.createElement('div'));
-    playername.setAttribute('id','player-card-name');
+    playername.setAttribute('id', 'player-card-name');
     let playerAlliance = allianceCard.appendChild(document.createElement('div'));
-    playerAlliance.setAttribute('id','player-card-alli');
+    playerAlliance.setAttribute('id', 'player-card-alli');
     let playerbases = allianceCard.appendChild(document.createElement('div'));
-    playerbases.setAttribute('id','player-card-bases');
+    playerbases.setAttribute('id', 'player-card-bases');
 
     //create alliance form
     let createAlliForm = document.createElement('form');
-    createAlliForm.setAttribute('action','/createAlliance');
-    createAlliForm.setAttribute('method','post');
-    createAlliForm.setAttribute('id','create-alli-form')
-    let namewrapper =createAlliForm.appendChild(document.createElement('div'));
-    namewrapper.setAttribute('id','create-alli-wrapper-name');
+    createAlliForm.setAttribute('action', '/createAlliance');
+    createAlliForm.setAttribute('method', 'post');
+    createAlliForm.setAttribute('id', 'create-alli-form')
+    let namewrapper = createAlliForm.appendChild(document.createElement('div'));
+    namewrapper.setAttribute('id', 'create-alli-wrapper-name');
     let label1 = namewrapper.appendChild(document.createElement('label'));
     label1.append(document.createTextNode('name'))
     let formInput1 = namewrapper.appendChild(document.createElement('input'));
-    formInput1.setAttribute('id','create-alli-input-name');
-    formInput1.setAttribute('type','text');
-    formInput1.setAttribute('name','alliname');
-    formInput1.setAttribute('placeholder','Name of alliance...');
-    let descwrapper =createAlliForm.appendChild(document.createElement('div'));
-    descwrapper.setAttribute('id','create-alli-wrapper-desc');
+    formInput1.setAttribute('id', 'create-alli-input-name');
+    formInput1.setAttribute('type', 'text');
+    formInput1.setAttribute('name', 'alliname');
+    formInput1.setAttribute('placeholder', 'Name of alliance...');
+    let descwrapper = createAlliForm.appendChild(document.createElement('div'));
+    descwrapper.setAttribute('id', 'create-alli-wrapper-desc');
     let label2 = descwrapper.appendChild(document.createElement('label'));
     label2.append(document.createTextNode('description'))
     let formInput2 = descwrapper.appendChild(document.createElement('textarea'));
-    formInput2.setAttribute('id','create-alli-input-desc');
-    formInput2.setAttribute('name','desc');
-    formInput2.setAttribute('placeholder','Describe the new alliance...');
-
+    formInput2.setAttribute('id', 'create-alli-input-desc');
+    formInput2.setAttribute('name', 'desc');
+    formInput2.setAttribute('placeholder', 'Describe the new alliance...');
     let formInput3 = createAlliForm.appendChild(document.createElement('input'));
-    formInput3.setAttribute('id','create-alli-input-submit');
-    formInput3.setAttribute('type','submit');
+    formInput3.setAttribute('id', 'create-alli-input-submit');
+    formInput3.setAttribute('type', 'submit');
     let active = false;
     let divs = {
         menuButton: createElement('div', { id: 'main-menu-butt' }),
@@ -352,13 +355,6 @@ let mainMenu = (function () {
         }
         divs.body.append(communityContent.base);
     };
-    divs.alli.onclick = function () {
-        if (divs.body.hasChildNodes()) {
-            divs.body.children[0].remove()
-
-        }
-        divs.body.append(alliContent.base);
-    };
     divs.help.onclick = function () {
         if (divs.body.hasChildNodes()) {
             divs.body.children[0].remove()
@@ -384,85 +380,114 @@ let mainMenu = (function () {
     createAliiButt.onclick = function () {
         if (divs.body.hasChildNodes()) {
             divs.body.children[0].remove()
-
         }
         divs.body.append(createAlliForm);
     };
     divs.alli.onclick = function () {
         if (divs.body.hasChildNodes()) {
             divs.body.children[0].remove()
-
         }
+        appendAlli();
+
         divs.body.append(alliContent.base);
     };
-    function fetchAllianceData(url,uname,desc = '',callback,callback2) {
-        fetch(url,{
-            method:'POST',
-            body:JSON.stringify({alliname:uname,desc:desc}),
+    function fetchAllianceData(url, Uname, callback) {
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({ alliname: Uname }),
             headers: { "Content-Type": "application/json" }
-        }).then(callback).then(callback2)
+        }).then(data => data.text()).then(callback)
     }
     function update(name, alliance, level) {
         divs.userAllip.innerHTML = alliance.toString();
         divs.userLevelp.innerHTML = level.toString();
         divs.userNamep.innerHTML = name.toString();
     }
-    function appendAlli() {
-        let jsonData,rrr;
-        fetchAllianceData('/allianceInfo','*','',async(data)=>{
-            if (data.type == 'basic') return data.text();
-            jsonData = JSON.parse(data.json());
-            console.log(jsonData);
-            for (let i = 0; i < jsonData.length; i++) {
-                rrr = alliContent.bodyTable.appendChild(document.createElement('tr'))
-                rrr.setAttribute('class','alliance-card')
-                rrr.innerHTML = `<td class\'alliance-name\'>${jsonData[i].name}</td>
-                <td class\'alliance-memberNo\'>${jsonData[i].members}</td>
-                <td class\'alliance-bases\'>${jsonData[i].bases}</td>`
+    function showAllicard(x) {
+        let rrr, sss;
+        console.log(x.target.parentElement.children[0].outerText);
+        fetchAllianceData('./allianceInfo', x.target.parentElement.children[0].outerText, data => {
+            data = JSON.parse(data)
+            console.log(data);
+            infoName.innerHTML = data.name;
+            infoDesc.innerHTML = data.desciption;
+            sss = data.members.split(';');
+            sss.pop();
+            for (let i = 0; i < sss.length; i++) {
+                rrr = memberBody.appendChild(document.createElement('tr'));
+                rrr.innerHTML = `<td class=\'member-name\'>${sss[i]}</tr>`
             }
-        },console.log)
-    }
-    function mockalli() {
-        let rrr = alliContent.bodyTable.appendChild(document.createElement('tr'))
-        rrr.setAttribute('class','alliance-card')
-        rrr.innerHTML = `<td class=\'alliance-name\'>Rakers</td>
-        <td class=\'alliance-memberNo\'>12</td>
-        <td class=\'alliance-bases\'>24</td>`
-        rrr.onclick = function () {
             if (divs.body.hasChildNodes()) {
                 divs.body.children[0].remove()
-    
+
             }
             divs.body.append(allianceCard);
-        }
+        });
+        if (getcookie('alliance') == x.target.parentElement.children[0].outerText)joinAllianceButt.innerHTML = 'Leave';
+        if (!getcookie('alliance') == x.target.parentElement.children[0].outerText)joinAllianceButt.innerHTML = 'Join';
+
+    }
+    function appendAlli() {
+        let rrr;
+        fetchAllianceData('/allianceInfo', '*', data => {
+            if (!data.includes('{')) return alert('', data);
+            data = JSON.parse(data);
+            for (let i = 0; i < data.length; i++) {
+                rrr = alliContent.bodyTable.appendChild(document.createElement('tr'));
+                rrr.setAttribute('class', 'alliance-card')
+                rrr.innerHTML = `<td class=\'alliance-name\'>${data[i].name}</td>
+                <td class=\'alliance-memberNo\'>${data[i].members.split(';').length - 1}</td>
+                <td class=\'alliance-bases\'>${data[i].bases}</td>`
+                rrr.onclick = showAllicard
+
+            }
+        })
     }
     function newCARD(a, b, c) {
         let e = createElement('tr', { class: 'player-card' });
         let f = [createElement('td'), createElement('td'), createElement('td')];
-        f[0].setAttribute('class','player-name');
-        f[1].setAttribute('class','player-alliance');
-        f[2].setAttribute('class','player-bases');
+        f[0].setAttribute('class', 'player-name');
+        f[1].setAttribute('class', 'player-alliance');
+        f[2].setAttribute('class', 'player-bases');
         f[0].append(document.createTextNode(a));
         f[1].append(document.createTextNode(b));
         f[2].append(document.createTextNode(c));
         e.append(...f)
         communityContent.table.append(e)
     }
+    function joinOrLeaveAlli(x) {
+        console.log(x.outerText);
+        if (x.outerText == 'Join') {
+            console.log('set');
+            fetch('/joinAlliance', {
+                method: 'post',
+                body: JSON.stringify({alliname: infoName.outerText }),
+                headers: { "Content-Type": "application/json" }
+            }).then(data => data.text()).then(data => {
+                alert('',data);
+                console.log(data);
+            })
+            return
+        }
+        if (x.outerText == 'leave') {
+            fetch('/leaveAlliance', {
+                method: 'post',
+                body: JSON.stringify({alliname:document.querySelector('#alli-card-info-name').outerHTML }),
+                headers: { "Content-Type": "application/json" }
+            }).then(data => data.text()).then(data => {
+                alert('',data)
+                console.log(data);
+            })
+        }
+
+    }
+    joinAllianceButt.onclick = function () {
+        joinOrLeaveAlli(joinAllianceButt);
+    };
     return {
         appendPlayerData: newCARD,
         updateUserData: update,
-        appendAlliances:appendAlli,
-        mockAlliances:mockalli
-
+        appendAlliances:appendAlli
     }
 })();
 //alert('well', 'hello there', 'jiggle')
-function rs(obj1, obj2) {
-    //return false if any objects with alliance as empty strings;ensure enemity;
-    if (obj1.whose.alliance.length && obj2.whose.alliance.length) return true;
-    return false
-}
-function objsAreAlly(obj1, obj2) {
-    if (obj1.whose.id == obj2.whose.id || obj1.whose.alliance == obj2.whose.alliance && rs(obj1, obj2)) return true;
-    return false
-}
