@@ -1,4 +1,5 @@
 //////server global variables////
+const sql = require('mysql')
 const sessionHandler = require('express-session');
 const resHandler = require('./resHandler');
 const crypto = require('crypto');
@@ -18,7 +19,7 @@ conn.connect(function (err) {
     if (err) console.log('1st err', err);
     console.log(" mysql Connected!");
 });
-const sessionStore = new mysqlStore(db.sessionConfig);
+const sessionStore = new mysqlStore(db.sessionConfig,conn);
 app.use(sessionHandler({
     key:'keyin',
     secret:'hgvdsuv83rvuy3vaea',
