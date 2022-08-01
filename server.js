@@ -18,7 +18,9 @@ conn.connect(function (err) {
     if (err) console.log(err.message);
     console.log(" mysql Connected!");
 });
-const sessionStore = new mysqlStore(db.sessionConfig,conn);
+const sessionStore = new mysqlStore(db.sessionConfig,conn,(err)=>{
+    if (err) console.log(err);
+});
 app.use(sessionHandler({
     key:'keyin',
     secret:'hgvdsuv83rvuy3vaea',
