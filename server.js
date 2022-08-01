@@ -13,6 +13,7 @@ const io = require('socket.io').Server;
 var mysql = require('mysql');
 const cookieParser = require('cookie-parser');
 var conn = mysql.createConnection(db.users);
+console.log(__dirname);
 conn.connect(function (err) {
     if (err) console.log(err.message);
     console.log("Connected!");
@@ -177,7 +178,7 @@ app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/login.html')
 })
-app.use('/', express.static('./app'));
+app.use('/', express.static('./public'));
 ///////global game variables///
 var codes = {
     actioncodes: {
@@ -952,5 +953,6 @@ setInterval(() => {
         })
     })
 }, 1000);
-setInterval((
-) => { }, 1000 * 60 * 60 * 6)
+setInterval(() => {
+    conn = mysql.createConnection(db.users)
+  }, 1000 * 60 * 60 * 6)

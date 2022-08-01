@@ -3,6 +3,7 @@ let login ={
   user: process.env.MYSQLUSER || 'root',
   password: process.env.MYSQLPASSWORD || '',
   database:process.env.MYSQLDATABASE || 'BFlogin',
+  port:process.env.MYSQLPORT
 }
 let sess = {
   expiration:1000*60*60*6,
