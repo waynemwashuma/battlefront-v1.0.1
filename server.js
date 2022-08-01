@@ -15,7 +15,7 @@ const cookieParser = require('cookie-parser');
 var conn = mysql.createConnection(db.users);
 console.log(__dirname);
 conn.connect(function (err) {
-    if (err) console.log(err.message);
+    if (err) console.log('1st err', err);
     console.log(" mysql Connected!");
 });
 const sessionStore = new mysqlStore(db.sessionConfig);
