@@ -24,7 +24,7 @@ app.use(sessionHandler({
     secret:'hgvdsuv83rvuy3vaea',
     resave:false,
     saveUninitialized:true,
-    store:sessionStore
+    store:sessionStore()
 }))
 const server = new io(http, {
     cors: {
