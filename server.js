@@ -10,13 +10,13 @@ const mysqlStore = require('express-mysql-session')(sessionHandler);
 const http = require('http').createServer(app);
 const port = process.env.PORT || 3000;
 const io = require('socket.io').Server;
-var mysql = require('mysql2');
+var mysql = require('mysql');
 const cookieParser = require('cookie-parser');
 var conn = mysql.createConnection(db.users);
 console.log(__dirname);
 conn.connect(function (err) {
     if (err) console.log(err.message);
-    console.log("Connected!");
+    console.log(" mysql Connected!");
 });
 const sessionStore = new mysqlStore(db.sessionConfig,conn);
 app.use(sessionHandler({
@@ -229,6 +229,7 @@ server.use((socket, next) => {
     next()
 })
 server.on('connection', socket => {
+    console.log('socket oi connected to client');
     console.log(socket.handshake.headers.cookie);
     if (typeof socket.handshake.headers.cookie === "string") {
         var sid = cookie.parse(socket.handshake.headers.cookie), sd;
