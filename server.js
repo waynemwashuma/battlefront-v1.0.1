@@ -178,7 +178,9 @@ app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/login.html')
 })
-app.use('/', express.static('./public'));
+app.use('/',(req,res)=>{
+    res.sendFile(process.env.LOCATION+'/app/public/index.html')
+});
 ///////global game variables///
 var codes = {
     actioncodes: {
