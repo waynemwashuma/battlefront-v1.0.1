@@ -55,7 +55,8 @@ let config = {
     secret: 'uygGVBYYG8yG&12ygYg6637GRV4C',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 3600000, secure: false, httpOnly: true, secure: false }
+    cookie: { maxAge: 3600000, secure: false, httpOnly: true, secure: false },
+    store:sessionStore
 }
 app.use(sessionHandler(config))
 app.use(cookieParser());
