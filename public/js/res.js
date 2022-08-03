@@ -14,7 +14,6 @@ function ResHandler(initres) {
     for (let i = 0; i < a.length; i++) {
         resUI.push(document.getElementById('res\-' + a[i] + '\-no'))
     }
-    //console.log(resUI);
     function updateUI(that) {
         return async function () {
             for (let i = 0; i < resUI.length; i++) {
@@ -62,7 +61,6 @@ let baseMenu = new (function Menu() {
     }
 
     Menu.prototype.remove = async function () {
-        //console.log('removed');
         this.buttons.forEach(b => {
             b.remove(this.buttons)
         })

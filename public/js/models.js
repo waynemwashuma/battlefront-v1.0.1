@@ -83,13 +83,10 @@ class Vector {
     static getDegBtwnVectors(v1, v2) {
         return Math.acos(v1.dot(v2) / (v1.mag() * v2.mag())) * 180 / Math.PI
     }
-    static getAbsDegBtwnVectors(v1, v2, t) {
+    static getAbsDegBtwnVectors(v1, v2) {
         //goes anticlockwise
         let absDeg = Vector.getDegBtwnVectors(v1, v1.x_axis);
         absDeg = v1.y > 0 ? absDeg : 360 - absDeg;
-        if (t) {
-            console.log(absdeg);
-        }
         v1.rotate(absDeg * Math.PI / 180);
         v2.rotate(absDeg * Math.PI / 180);
         return v2.y > 0 ? Vector.getDegBtwnVectors(v1, v2) : 360 - Vector.getDegBtwnVectors(v1, v2)
@@ -193,7 +190,6 @@ function Flak(x, y, deg = 90) {
     Flak.prototype.fireOn = function (obj) {
         if (this.reload <= 0) {
             obj.health -= this.damage;
-            console.log('fire');
             this.reload = 10000;
         }
     }
