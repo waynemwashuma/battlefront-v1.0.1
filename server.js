@@ -74,7 +74,7 @@ app.post('/login', function (req, res) {
     ], (err, results) => {
         if (!err) {
             if (!results.length) return res.send('username does not exist');
-            if (results[0].userPwd !== hash(req.body.pwd)) return res.send('You provided a wrong password')
+            if (results[0].userPwd !== hash(req.body.pwd)) return res.send('You provided a wrong password');
             req.session.uname = req.body.username;
             req.session.uid = results[0].userId;
             req.session.authenticated = true;
@@ -82,7 +82,7 @@ app.post('/login', function (req, res) {
             res.cookie('name', req.body.username, { maxAge: new Date(Date.now() + 360000), overwrite: true });
             res.redirect('./game.html');
             if (hasBase(req.body.username)) return;
-            addBase({ name: req.body.username, alliance: '', level: 0, id: results[0].userId }, gen.next().value)
+            addBase({ name: req.body.username, alliance: '', level: 0, id: results[0].uid }, gen.next().value)
         }
         if (err)console.log(err.message);
     });
