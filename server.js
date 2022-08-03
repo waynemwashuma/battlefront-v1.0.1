@@ -80,9 +80,9 @@ app.post('/login', function (req, res) {
             req.session.authenticated = true;
             res.cookie('sessId', req.sessionID, { maxAge: 1000 * 60 * 60 * 24, httpOnly: true });
             res.cookie('name', req.body.username, { maxAge: new Date(Date.now() + 360000), overwrite: true });
+            res.redirect('./game.html');
             if (hasBase(req.body.username)) return;
             addBase({ name: req.body.username, alliance: '', level: 0, id: results[0].userId }, gen.next().value)
-            res.redirect('./game.html');
         }
         if (err)console.log(err.message);
     });
