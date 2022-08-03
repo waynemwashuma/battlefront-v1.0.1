@@ -45,6 +45,13 @@ function Client(sessid, uid, name, socketid) {
 function hash(data) {
     return crypto.createHash('sha512').update(data).digest('hex')
 }
+async function resolveNewPlayer(name) {
+    conn.query('SELECT * FROM users WHERE userName = ?',[name],(err,results)=>{
+        if (!err) {
+            conn.query('INSERT INTO players(uid,name,score,bases) VALUES (?,?,?,?)',[results[0].uid,results[0].name,0,1])
+        }
+    })
+}
 ///binds server to a port
 http.listen(port, function () {
     console.log('listening on port::' + port);
@@ -56,18 +63,11 @@ let config = {
     cookie: { maxAge: 3600000, secure: false, httpOnly: true, secure: false },
     store: sessionStore
 }
-hash('123');
 app.use(sessionHandler(config));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '4kb' }));
 app.post('/login', function (req, res) {
-    if (req.session) {
-        req.session.reload((err) => {
-            if (err) console.log(err);
-            console.log(req.session);
-        })
-    }
     if (!req.body.username || !req.body.pwd) return res.send('Fill all fields!');
     conn.query("SELECT * FROM users WHERE userName = ? OR userMail = ? ", [
         req.body.username, req.body.email
