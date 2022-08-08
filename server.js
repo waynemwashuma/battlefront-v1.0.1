@@ -75,8 +75,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '4kb' }));
 app.get('/',(req,res)=>{
     console.log(req.cookies);
-    if (!req.cookies.name)res.status(308).redirect('./signup');
-    if (!req.session || !req.cookies.remember)res.status(308).redirect('./login');
+    if (!req.cookies.name)return res.status(308).redirect('./signup');
+    if (!req.session || !req.cookies.remember)return res.status(308).redirect('./login');
     res.render('game')
 })
 app.get('/login',(req,res)=>{
@@ -95,7 +95,7 @@ app.post('/login', function (req, res) {
             req.session.authenticated = true;
             res.cookie('sessId', req.sessionID, { maxAge: 1000 * 60 * 60 * 24, httpOnly: true });
             res.cookie('name', req.body.username, { maxAge: new Date(Date.now() + 360000), overwrite: true });
-            res.redirect('./game.html');
+            res.render('game');
             if (hasBase(req.body.username)) return;
             addBase({ name: req.body.username, alliance: '', level: 0, id: results[0].uid }, gen.next().value)
         }
@@ -123,7 +123,7 @@ app.post('/signup', (req, res) => {
             if (req.body.remember) res.cookie('remember',true)
             res.cookie('sessId', req.sessionID, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 });
             res.cookie('name', req.body.username, { maxAge: 360000, overwrite: true });
-            res.redirect('./game.html')
+            res.render('game')
             addBase({ name: req.body.username, alliance: '', level: 0 }, gen.next().value);
             console.log('new user ::: ', req.body.username);
         }
