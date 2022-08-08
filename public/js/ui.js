@@ -151,7 +151,7 @@ let mainMenu = (function () {
         base: createElement('div', { id: 'community-base' }),
         main: createElement('div', { id: 'community-main' }),
         table: createElement('table', { id: 'community-table' }),
-        tableHeader: createElement('tr', { id: 'community-table-header' }),
+        tableHeader: createElement('thead', { id: 'community-table-header' }),
         footer: createElement('div', { id: 'community-footer' }),
         headerName: createElement('th', { id: 'community-header-name' }),
         headerAlli: createElement('th', { id: 'community-header-alli' }),
@@ -189,7 +189,6 @@ let mainMenu = (function () {
             body: createElement('div', { id: 'help-body' }),
             footer: createElement('div', { id: 'help-footer' })
         };
-
     //arranges the nodes of community tab//
     communityContent.headerName.append(document.createTextNode('Name'));
     communityContent.headerAlli.append(document.createTextNode('Alliance'));
@@ -202,7 +201,6 @@ let mainMenu = (function () {
     communityContent.base.append(communityContent.main);
     communityContent.table.append(communityContent.tableHeader);
     communityContent.tableHeader.append(communityContent.headerName, communityContent.headerAlli, communityContent.headerBases);
-
     communityContent.footer.append(communityContent.footerWrapper);
     communityContent.main.append(communityContent.table, communityContent.footer)
     communityContent.footerWrapper.append(communityContent.prev, communityContent.first, communityContent.second, communityContent.third, communityContent.next);
@@ -422,6 +420,7 @@ let mainMenu = (function () {
                 sss[i] = sss[i].split('=')
             }
             for (let i = 0; i < sss.length; i++) {
+                console.log(sss[i]);
                 if (sss[i][0] == 'leader' && sss[i][1] == user.name) disbandAllianceButt.style.display = 'initial';
                 rrr = memberBody.appendChild(document.createElement('tr'));
                 rrr.innerHTML = `<td class=\'member-name\'>${sss[i][0]} :: ${sss[i][1]}</tr>`
@@ -465,7 +464,7 @@ let mainMenu = (function () {
         communityContent.table.append(e)
     }
     function joinOrLeaveAlli(x) {
-        if (x.outerText.toLocaleLowerCase() == 'join') {
+        if (x.target.outerText.toLocaleLowerCase() == 'join') {
             fetch('/joinAlliance', {
                 method: 'post',
                 body: JSON.stringify({alliname: infoName.outerText }),
@@ -476,7 +475,7 @@ let mainMenu = (function () {
             })
             return
         }
-        if (x.outerText.toLocaleLowerCase() == 'leave') {
+        if (x.target.outerText.toLocaleLowerCase() == 'leave') {
             fetch('/leaveAlliance', {
                 method: 'post',
                 body: JSON.stringify({alliname:infoName.outerText }),
@@ -488,20 +487,21 @@ let mainMenu = (function () {
         }
 
     }
-    function disbandAlliance(x) {
+    function disbandAlliance() {
         fetch('disbandAlliance',{
             method: 'DELETE',
             body: JSON.stringify({ alliname: infoName.outerText }),
             headers: { "Content-Type": "application/json" }
-        }).then(data=>data.text()).then(alert)
+        }).then(data=>data.text()).then(data=>{
+            alert('',data)
+        })
     }
-    joinAllianceButt.onclick = function (x) {
-        joinOrLeaveAlli(x.target);
-    };
+    joinAllianceButt.onclick = joinOrLeaveAlli;
+    disbandAllianceButt.onclick = disbandAlliance;
     return {
         appendPlayerData: newCARD,
         updateUserData: update,
         appendAlliances:appendAlli
     }
 })();
-//alert('well', 'hello there', 'jiggle')
+navigator.clipboard.readText().then(console.log)

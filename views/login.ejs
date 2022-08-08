@@ -24,11 +24,18 @@
                 <input type="password" name="pwd">
             </p>
             <p>
+                <input type="checkbox" name="remembers" id="">
+                <label for="rememberme">Remember me</label>
+            </p>
             <input type="submit" value="LOGIN" name="submit">
-        </form>
+            <%if(error){%>
+                <p class="error">
+                <%=error%>
+                </p>
+            <%}%>
     </fieldset>
     <div id="login">
-        <a href="./signup.html">signup here</a>
+        <a href="./signup">signup here</a>
     </div>
 </body>
 

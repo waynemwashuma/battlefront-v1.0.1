@@ -45,11 +45,15 @@ function Client(sessid, uid, name, socketid) {
 function hash(data) {
     return crypto.createHash('sha512').update(data).digest('hex')
 }
-async function resolveNewPlayer(name) {
-    conn.query('SELECT * FROM users WHERE userName = ?',[name],(err,results)=>{
+async function resolveNewPlayer(name, req) {
+    conn.query('SELECT * FROM users WHERE userName = ?', [name], (err, results) => {
         if (!err) {
-            conn.query('INSERT INTO players(uid,name,score,bases) VALUES (?,?,?,?)',[results[0].uid,results[0].name,0,1])
+            conn.query('INSERT INTO players(uid,name,score,bases) VALUES (?,?,?,?)', [results[0].uid, results[0].userName, 0, 1], (err) => {
+                if (err) console.log(err.message);
+                req.session.uid = results[0].uid;
+            });
         }
+        if (err) console.log(err.message);
     })
 }
 ///binds server to a port
@@ -58,23 +62,34 @@ http.listen(port, function () {
 });
 let config = {
     secret: 'uygGVBYYG8yG&12ygYg6637GRV4C',
+    rolling:true,
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 3600000, secure: false, httpOnly: true, secure: false },
     store: sessionStore
 }
+app.set('view engine','ejs')
 app.use(sessionHandler(config));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '4kb' }));
+app.get('/',(req,res)=>{
+    console.log(req.cookies);
+    if (!req.cookies.name)res.status(308).redirect('./signup');
+    if (!req.session || !req.cookies.remember)res.status(308).redirect('./login');
+    res.status(308).redirect('./game.html')
+})
+app.get('/login',(req,res)=>{
+    res.render('login',{error:''})
+})
 app.post('/login', function (req, res) {
-    if (!req.body.username || !req.body.pwd) return res.send('Fill all fields!');
+    if (!req.body.username || !req.body.pwd) return res.render('login',{error:'Fill all fields!'});
     conn.query("SELECT * FROM users WHERE userName = ? OR userMail = ? ", [
         req.body.username, req.body.email
     ], (err, results) => {
         if (!err) {
-            if (!results.length) return res.send('username does not exist');
-            if (results[0].userPwd !== hash(req.body.pwd)) return res.send('You provided a wrong password');
+            if (!results.length) return res.render('login',{error:'username does not exist'});
+            if (results[0].userPwd !== hash(req.body.pwd)) return res.render('login',{error:'You provided a wrong password'});
             req.session.uname = req.body.username;
             req.session.uid = results[0].userId;
             req.session.authenticated = true;
@@ -84,23 +99,28 @@ app.post('/login', function (req, res) {
             if (hasBase(req.body.username)) return;
             addBase({ name: req.body.username, alliance: '', level: 0, id: results[0].uid }, gen.next().value)
         }
-        if (err)console.log(err.message);
+        if (err) console.log(err.message);
     });
 });
-app.post('/signup', (req, res)=> {
-    if (!req.body.username || !req.body.pwd || !req.body.conpwd || !req.body.email) return res.send('fill all fields');;
-    if (req.body.pwd !== req.body.conpwd) res.send('password and its confirmtion do not match');
+app.get('/signup',(req,res)=>{
+    res.render('signup',{error:''})
+});
+app.post('/signup', (req, res) => {
+    if (!req.body.username || !req.body.pwd || !req.body.conpwd || !req.body.email) return res.render('signup',{error:'fill all fields!'});;
+    if (req.body.pwd !== req.body.conpwd) res.render('signup',{error:'password and its confirmtion do not match'});
     let hashpwd = hash(req.body.pwd);
     conn.query("SELECT * FROM users WHERE userName = ? OR userMail = ? ", [
         req.body.username, req.body.email
     ], (err, results) => {
         if (!err) {
-            if (results.length) return res.send('username or email taken');
+            if (results.length) return res.render('signup',{error:'username or email taken'});
             conn.query("INSERT INTO users(userName,userMail,userPwd) VALUES (?,?,?)", [
                 req.body.username, req.body.email, hashpwd
-            ], err =>{if(err)console.log(err.message)})
+            ], err => { if (err) console.log(err.message) })
+            resolveNewPlayer(req.body.username, req)
             req.session.authenticated = true;
-            req.session.name = req.body.username;
+            req.session.uname = req.body.username;
+            if (req.body.remember) res.cookie('remember',true)
             res.cookie('sessId', req.sessionID, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 });
             res.cookie('name', req.body.username, { maxAge: 360000, overwrite: true });
             res.redirect('./game.html')
@@ -110,7 +130,7 @@ app.post('/signup', (req, res)=> {
         if (err) console.log(err.message);
     });
 });
-app.post('/createAlliance',(req, res)=> {
+app.post('/createAlliance', (req, res) => {
     if (!req.session) return res.send('log into your account first');
     if (!req.body.alliname) return res.send('No name specified for the alliance');
     //if (req.session.alliance) return res.send('Cannot create alliance when in one');
@@ -180,31 +200,38 @@ app.post('/joinAlliance', function (req, res) {
     })
 });
 app.delete('/disbandAlliance', (req, res) => {
-    if (req.session) return res.send('log into your account');
+    let leader;
+    if (!req.session) return res.send('log into your account');
     if (!req.body.alliname) return res.send('No name specified for the alliance');
     //if (req.session.alliance) return res.send('Cannot create alliance when in one');
     conn.query('SELECT * FROM alliances WHERE name=?', [req.body.alliname], (err, results) => {
         if (!err) {
-            if (results.length) return res.send('Alliance already exists!');
-            conn.query("INSERT INTO alliances(name,desciption,members,bases) VALUES (?,?,?,?)", [
-                req.body.alliname, req.body.desc, `leader=${req.session.uname};`, 1
+            if (!results.length) return res.send('No such alliance exists!');
+            leader = results[0].members.split(';')[0];
+            if (!leader.includes(req.session.uname))return res.send('Forbidden as you are not the alliance leader')
+            conn.query("DELETE FROM alliances WHERE name = ?", [
+                results[0].name
             ], (err) => {
                 if (err) console.log(err.message);;
-                res.redirect('./game.html');
+                res.status(200).send('Alliance has been disbanded')
             })
         }
     })
 });
 app.delete('/player', (req, res) => {
     if (req.session) return res.send('Please log in to delete your account');
-    conn.query('SELECT * FROM users WHERE userName=?', [req.session.name], (err, results) => {
+    conn.query('SELECT * FROM users WHERE uid=?', [req.session.uid], (err, results) => {
         if (!err) {
-            if (!results.length) return res.send('No such alliance exists');
+            if (!results.length) return res.send('No such user exists');
             if (results[0].members.includes(req.session.uname)) return res.send('Already in this alliance');
-            conn.query('DELETE FROM `users` WHERE uid = ?', [req.session.uid], (err) => {
+            conn.query('DELETE FROM users WHERE uid = ?', [req.session.uid], (err) => {
                 if (err) console.log(err);
-                res.status(200).redirect('/login.html')
+                conn.query('DELETE FROM players WHERE uid = ?', [req.session.uid], (err) => {
+                    if (err) console.log(err);
+                    res.status(200).redirect('/signup.html')
+                })
             })
+
         }
         if (err) console.log(err.sqlMessage)
     })
@@ -213,14 +240,14 @@ app.post('/playerInfo', (req, res) => {
     if (!req.sessionID) return res.status().send('log into your account first');
     if (!req.body.playername) return res.send('No name specified for the player');
     if (req.body.playername == '*') {
-        conn.query('SELECT * FROM alliances', [req.body.playername], (err, results) => {
+        conn.query('SELECT * FROM players', [req.body.playername], (err, results) => {
             if (!err) res.status(200).json(results)
         })
         return
     }
-    conn.query('SELECT name,desciption, members, bases FROM alliances WHERE name=?', [req.body.playername], (err, results) => {
+    conn.query('SELECT name,score, bases FROM players WHERE name=?', [req.body.playername], (err, results) => {
         if (!err) res.status(200).json(results[0]);
-    })
+    });
 });
 app.get('/logout', (req, res) => {
     req.session.destroy();
@@ -243,7 +270,6 @@ var codes = {
         base: 500
     }
 }
-
 server.use((socket, next) => {
     if (typeof socket.handshake.headers.cookie !== "string") next(new Error('unathorized'));
     if (!cookie.parse(socket.handshake.headers.cookie).sessId) next(new Error('unathorized'));
