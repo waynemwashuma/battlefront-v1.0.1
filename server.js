@@ -77,7 +77,7 @@ app.get('/',(req,res)=>{
     console.log(req.cookies);
     if (!req.cookies.name)res.status(308).redirect('./signup');
     if (!req.session || !req.cookies.remember)res.status(308).redirect('./login');
-    res.status(308).redirect('./game.html')
+    res.render('game')
 })
 app.get('/login',(req,res)=>{
     res.render('login',{error:''})
