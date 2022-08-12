@@ -180,14 +180,6 @@ setInterval(function () {
         tank.turrent.reload -= 1000
     })
 }, 1000);
-setInterval(() => {
-    for (let i = 0; i < ctx.length; i++) {
-
-        c.item(i).width = innerWidth;
-        c.item(i).height = innerHeight;
-    }
-
-}, 100);
 function getcookie(key) {
     let pairs = document.cookie.split(';');
     for (let i = 0; i < pairs.length; i++) {
@@ -196,18 +188,9 @@ function getcookie(key) {
         }
     }
 }
-function loop() {
-    for (let val of gameLib.bases.values()) {
-        for (let val of gameLib.bases.values()) {
-            if (val.whose.name == user.name) return true
-        }
-    }
-}
-
 setTimeout(() => {
     user.name = getcookie('name');
     user.level = getcookie('lvl') || '';
     user.alliance = getcookie('alliance') || '';
     mainMenu.updateUserData(user.name, user.alliance, user.level);
-    console.log(loop());
 }, 2000)

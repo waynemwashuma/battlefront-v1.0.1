@@ -354,8 +354,8 @@ let mainMenu = (function () {
     divs.community.onclick = function () {
         if (divs.body.hasChildNodes()) {
             divs.body.children[0].remove()
-
         }
+        appendPlayers();
         divs.body.append(communityContent.base);
     };
     divs.help.onclick = function () {
@@ -390,7 +390,6 @@ let mainMenu = (function () {
             divs.body.children[0].remove()
         }
         appendAlli();
-
         divs.body.append(alliContent.base);
     };
     function fetchAllianceData(url, Uname, callback) {
@@ -430,10 +429,10 @@ let mainMenu = (function () {
 
             }
             divs.body.append(allianceCard);
+            if (getcookie('alliance') == data.name)joinAllianceButt.innerHTML = 'Leave';
+            if (getcookie('alliance') && getcookie('alliance') == data.name) return joinAllianceButt.style.display = 'none';
+            if (!getcookie('alliance') == data.name)joinAllianceButt.innerHTML = 'Join';
         });
-        if (getcookie('alliance') == x.target.parentElement.children[0].outerText)joinAllianceButt.innerHTML = 'Leave';
-        if (!getcookie('alliance') == x.target.parentElement.children[0].outerText)joinAllianceButt.innerHTML = 'Join';
-
     }
     function appendAlli() {
         let rrr;
@@ -462,6 +461,26 @@ let mainMenu = (function () {
         f[2].append(document.createTextNode(c));
         e.append(...f)
         communityContent.table.append(e)
+    }
+    function fetchPlayerData(name,callback) {
+        fetch('/playerInfo',{
+            method:'post',
+            body:JSON.stringify({playername:name}),
+            headers: { "Content-Type": "application/json" }
+    }).then(data=>data.text()).then(callback)
+    }
+    function showPlayerCARD() {
+        
+    }
+    function appendPlayers() {
+        fetchPlayerData('*',(data)=>{
+            if (!data.includes('{'))return alert('',data);
+            data = JSON.parse(data);
+            console.log(data);
+            for (let i = 0; i < data.length; i++) {
+                newCARD(data[i].name,data[i].score,data[i].bases)
+            }
+        })
     }
     function joinOrLeaveAlli(x) {
         if (x.target.outerText.toLocaleLowerCase() == 'join') {
@@ -504,4 +523,3 @@ let mainMenu = (function () {
         appendAlliances:appendAlli
     }
 })();
-navigator.clipboard.readText().then(console.log)

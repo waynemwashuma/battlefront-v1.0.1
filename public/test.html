@@ -5,18 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>testgrounds</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/io2.js" defer></script>
     <link rel="stylesheet" href="./css/ui.css">
 </head>
 <body style="width:100%;height:100vh;">
-    <script>
-        let user = {
-            name:'wayne',
-            id:123456,
-            alliance:'rakers'
-        }
-    </script>
-    <div id="top-view" style="position: absolute;"></div>
-    <div id="test" style="position: absolute; width: 500px;height: 500px;left:50%; background-color: aqua;top: 50%;transform: translate(-50%,-50%);"></div>
+    <input type="text" placeholder="name" id="room">
+    <input type="text" placeholder="message" id="chat">
+    <input type="button" id="chat-butt" value="send">
+    <ul id="chat-box"></ul>
 </body>
-<script src="./js/ui.js"></script>
 </html>

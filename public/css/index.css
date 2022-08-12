@@ -12,9 +12,19 @@ canvas{
 }
 #mini{
     width: 300px;
-    height: 150px;
+    height: auto;
     left: 100%;
     background-color: black;
     opacity: 0.9;
     transform: translate( -100%);
+}
+#can-div{
+    height: inherit;
+    width: inherit;
+}
+@media only screen and(max-width:600px){
+    #mini{
+        width: 160px;
+        height: auto;
+    }
 }
