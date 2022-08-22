@@ -22,19 +22,68 @@ let logintime = Date.now();
 var mouse = (() => {
     let objs = [];
     let x = 0, y = 0, lastX, lastY, downX, downY;
-    let direction = [0, 0], speed = 0, dragging = false;
+    let direction = [0, 0], speed = 0, dragging = false,draggBoxAvailalbe = false;
+    function inDragBox(pos, width, height) {
+        if (
+            pos.x - height / 2 <= origin.x - padding ||
+            pos.x + height / 2 >= origin.x + innerWidth + padding ||
+            pos.y - width <= origin.y - padding ||
+            pos.y + width >= origin.y + innerHeight + padding) {
+            return false
+        }
+        return true
+    }
     function getMag(x, y) {
         return Math.sqrt(Math.pow(y, 2) + Math.pow(x, 2));
     };
-    addEventListener('mousedown' || 'pointerdown', function (e) {
-        downX = e.clientX;
-        downY = e.clientY;
-        dragging = true;
+    function drawMouseDragBox(ctx,originX,originY) {
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(0,0,133,0.3)';
+        ctx.strokeStyle = 'rgba(0,0,255,0.3)';
+        ctx.lineWidth = 5;
+        ctx.fillRect(x + originX,y + originY);
+        ctx.stroke();
+        ctx.closePath();
+    }
+    addEventListener('touchstart', function (e) {
+        console.log(true);
+        if (e.buttons == 1) {
+            downX = e.clientX;
+            downY = e.clientY;
+            dragging = true;
+        } else if(e.buttons == 2 ){
+            draggBoxAvailalbe = true
+        }
+
     });
-    addEventListener('mouseup' || 'pointerup', function (e) {
+    addEventListener('mousedown', function (e) {
+        if (e.buttons == 1) {
+            downX = e.clientX;
+            downY = e.clientY;
+            dragging = true;
+        } else if(e.buttons == 2 ){
+            draggBoxAvailalbe = true
+        }
+
+    });
+    addEventListener('touchend', function (e) {
         dragging = false;
     });
-    addEventListener('mousemove' || 'pointermove', function (e) {
+    addEventListener('mouseup', function (e) {
+        dragging = false;
+    });
+    addEventListener('touchmove', function (e) {
+        lastX = x;
+        lastY = y;
+        x = e.pageX;
+        y = e.pageY;
+        if (dragging) {
+            speed = getMag(x - lastX, y - lastY);
+            direction[0] = x - lastX !== 0 ? (x - lastX) / speed : 0;
+            direction[1] = y - lastY !== 0 ? (y - lastY) / speed : 0;
+        }
+    });
+    addEventListener('mousemove', function (e) {
         lastX = x;
         lastY = y;
         x = e.pageX;
@@ -47,7 +96,7 @@ var mouse = (() => {
     });
     addEventListener('click', () => {
         speed = 0;
-    })
+    });
     setInterval(() => {
         let redTime = 0.5;
         speed = speed > redTime && !dragging ? speed - redTime : speed > redTime && dragging ? speed : 0;

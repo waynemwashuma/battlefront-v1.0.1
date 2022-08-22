@@ -6,6 +6,7 @@ document.querySelector('#chat-butt').onclick = e=>{
     sock.emit('pl-message',form.value);
     if (room.value) sock.emit('room-join',room.value)
     form.value = '';
+    
 }
 sock.on('sys-message',(...data)=>{
     let t = document.createElement('li');

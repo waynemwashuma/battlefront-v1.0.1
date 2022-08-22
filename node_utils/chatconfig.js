@@ -1,3 +1,4 @@
+const {ResHandler}=require('./resHandler')
 Array.prototype.remove = function (value) {
     let w = this.findIndex(client=>client.socketid == id);
     if(w == -1)return;
@@ -10,7 +11,7 @@ function Client(uid, name, socketid) {
     this.online = true;
     this.lastOnline = null;
     this.lastlogin = null;
-    //this.resHandler = new resHandler.ResHandler();
+    this.resHandler = new ResHandler();
     this.socketid = socketid;
     this.rooms = [];
 }
@@ -25,7 +26,7 @@ function findClient(id) {
     return clients.find(client => client.socketid === id);
 }
 function createClient(uid, name, socketid) {
-    if (clients.find(client => client.uid === uid)) return console.log('found');;
+    if (clients.find(client => client.uid === uid)) return;
     clients.push(new Client(uid, name, socketid))
 }
 function destroyClient(id) {
@@ -76,7 +77,8 @@ module.exports = {
     resolveAndJoinRoom,
     debug,
     findRoomUsers,
-    chatRooms
+    chatRooms,
+    clients
 }
 setInterval(()=>{
     chatRooms.forEach(room=>{

@@ -419,7 +419,6 @@ let mainMenu = (function () {
                 sss[i] = sss[i].split('=')
             }
             for (let i = 0; i < sss.length; i++) {
-                console.log(sss[i]);
                 if (sss[i][0] == 'leader' && sss[i][1] == user.name) disbandAllianceButt.style.display = 'initial';
                 rrr = memberBody.appendChild(document.createElement('tr'));
                 rrr.innerHTML = `<td class=\'member-name\'>${sss[i][0]} :: ${sss[i][1]}</tr>`
@@ -437,6 +436,7 @@ let mainMenu = (function () {
     function appendAlli() {
         let rrr;
         fetchAllianceData('/allianceInfo', '*', data => {
+        alliContent.bodyTable.replaceChildren(alliContent.bodyTableHead,createAliiButt)
             if (!data.includes('{')) return alert('', data);
             data = JSON.parse(data);
             for (let i = 0; i < data.length; i++) {
@@ -446,7 +446,6 @@ let mainMenu = (function () {
                 <td class=\'alliance-memberNo\'>${data[i].members.split(';').length - 1}</td>
                 <td class=\'alliance-bases\'>${data[i].bases}</td>`
                 rrr.onclick = showAllicard
-
             }
         })
     }
@@ -473,12 +472,12 @@ let mainMenu = (function () {
         
     }
     function appendPlayers() {
+        communityContent.table.replaceChildren(communityContent.tableHeader)
         fetchPlayerData('*',(data)=>{
             if (!data.includes('{'))return alert('',data);
             data = JSON.parse(data);
-            console.log(data);
             for (let i = 0; i < data.length; i++) {
-                newCARD(data[i].name,data[i].score,data[i].bases)
+                newCARD(data[i].name,data[i].alliance,data[i].bases)
             }
         })
     }

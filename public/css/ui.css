@@ -70,10 +70,10 @@ body {
 #alert-wrapper {
     margin: 0px;
     padding: 0px;
-    z-index: 100;
     height: 100%;
     width: 100%;
-    position: absolute;
+    position: fixed;
+    top: 0%;
 }
 
 #alert-blank {
@@ -88,7 +88,6 @@ body {
     width: 300px;
     height: 200px;
     position: absolute;
-    z-index: 30;
     background-color: lightseagreen;
     display: flex;
     flex-direction: column;
@@ -433,7 +432,8 @@ body {
 #main-menu-base {
     width: 100%;
     height: 100%;
-    position: absolute;
+    position: fixed;
+    top: 0%;
 }
 
 #main-menu-main {
@@ -514,17 +514,15 @@ body {
     height: 80%;
     background-color: green;
 }
-
+#main-menu-user > div{
+    display: flex;
+    flex-direction: left;
+}
 #main-menu-user-name {
     width: 100%;
     height: 40%;
     background-color: chocolate;
 }
-
-#main-menu-user-name>p {
-    display: inline;
-}
-
 #main-menu-user-alli {
     background-color: darksalmon;
     width: 100%;
@@ -538,12 +536,11 @@ body {
     background-color: darkslategray;
 
 }
-
 #main-menu-user-name>label {
     margin-top: auto;
     margin-bottom: auto;
     font-weight: 500;
-    width: 20%;
+    width: fit-content;
     height: 100%;
     text-align: justify;
     font-size: 20px;
@@ -553,7 +550,7 @@ body {
     margin-top: auto;
     margin-bottom: auto;
     font-weight: bolder;
-    width: 20%;
+    width: fit-content;
     height: 100%;
     text-align: justify;
     font-size: 20px;
@@ -563,16 +560,16 @@ body {
     margin-top: auto;
     margin-bottom: auto;
     font-weight: lighter;
-    width: 20%;
+    width: fit-content;
     height: 100%;
     text-align: justify;
     font-size: 16px;
 }
 
 span {
-    position: inherit;
-    left: 100%;
-    transform: translate(-100%);
+    line-height: normal;
+    text-align:center;
+    margin: 0% auto;
 }
 
 /*community tab of main menu*/

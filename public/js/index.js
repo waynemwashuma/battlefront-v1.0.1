@@ -59,7 +59,7 @@ Array.prototype.remove = function (value) {
 }
 /////global variables/////
 //game objects` library
-let gameLib = {
+var gameLib = {
     bases: new Map(),
     tanks: new Map(),
     bullets: new Array(),

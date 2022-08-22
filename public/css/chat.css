@@ -1,0 +1,35 @@
+body,html{
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+}
+#chat-wrapper{
+    position: absolute;
+    width: 250px;
+    height: 200px;
+    background-color: black;
+    top: 98%;
+    transform: translateY(-100%);
+    color: white;
+}
+#chat-inputs{
+    margin: auto;
+    transform: translateY(-100%);
+    width: inherit;
+}
+#chat-send{
+    margin: 0% auto;
+}
+#chat-box{
+    padding-inline-start: 10px;
+    list-style-type: none;
+    height: 80%;
+    margin: 10px 0px 0px;
+    overflow-y: scroll;
+}
+.chat-message{
+    width: 95%;
+    height: auto;
+    min-height: 20px;
+    word-wrap: normal;
+}
