@@ -16,7 +16,7 @@ const cookieParser = require('cookie-parser');
 var conn = mysql.createConnection(db.users);
 var conn2 = conn.promise();
 conn.connect(function (err) {
-    if (err) console.log('1st err', err);
+    if (err) console.log('1st err', err.message);
     console.log(" mysql Connected!");
 });
 const server = new io(http, {
@@ -68,7 +68,6 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '4kb' }));
 app.get('/',(req, res) => {
-    console.log(getPlayerdata(req.session.uname,console.log));
     if ((req.cookies.remember === '1' || req.cookies.forward === '1') && req.session.authenticated) {
         conn.query('SELECT * FROM players WHERE name = ?', [req.session.uname], (err, results) => {
             if (!err) {
@@ -875,7 +874,6 @@ function Flak(x, y, deg, id) {
         //this should be in the base class:::done
         for (const e of arr.values()) {
             if (circle_collider(this.pos, e.pos, this.range) && !Object.is(obj, e) && !objsAreAlly(obj, e)) {
-                console.log(e.whose);
                 return e;
             }
         }
