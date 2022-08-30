@@ -1,12 +1,6 @@
-
 const MiniMap = (function () {
-    function rs(obj1,obj2) {
-        //return false if objects with alliance as empty strings;ensure enemity;
-        if (obj1.whose.alliance.length && obj2.alliance.length) return true;
-        return false
-    }
     function objsAreAllyOrNot(obj1,obj2) {
-        if (obj1.whose.id == obj2.id || obj1.whose.alliance == obj2.alliance && rs(obj1,obj2))return true;
+        if ((obj1.whose.id == obj2.id || obj1.whose.alliance == obj2.alliance) && obj1.whose.alliance.length)return true;
         return false
     }
     let colorAlfa = 0.6;
@@ -30,7 +24,7 @@ const MiniMap = (function () {
     }
     function drawVehicle(ctx, vehicle) {
         ctx.beginPath();
-        ctx.fillStyle = vehicle.whose.name == user.name ? ' rgb(0, 255, 13)' : vehicle.whose.alliance == user.alliance ? 'rgb(6, 117, 245)' : 'rgb(245, 6, 18)';
+        ctx.fillStyle = vehicle.whose.name == user.name ? ' rgb(0, 255, 13)' : objsAreAllyOrNot(vehicle,user) ? 'rgb(6, 117, 245)' : 'rgb(245, 6, 18)';
         ctx.fillRect(...convertScale(vehicle.pos), 3, 3)
         ctx.closePath();
     }

@@ -14,7 +14,7 @@ const io = require('socket.io').Server;
 const mysql = require('mysql2');
 const cookieParser = require('cookie-parser');
 var conn = mysql.createConnection(db.users);
-const conn2 = conn.promise();
+var conn2 = conn.promise();
 conn.connect(function (err) {
     if (err) console.log('1st err', err);
     console.log(" mysql Connected!");
@@ -67,11 +67,24 @@ app.use(sessionHandler(config));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '4kb' }));
-app.get('/', (req, res) => {
-    console.log(req.cookies);
-    if (req.cookies.remember === 'true'&& req.session) res.render('game');
-    if (!req.cookies.name) return res.status(308).redirect('./signup');
-    if (!req.session || req.cookies.remember === 'false') return res.status(308).redirect('./login');
+app.get('/',(req, res) => {
+    console.log(getPlayerdata(req.session.uname,console.log));
+    if ((req.cookies.remember === '1' || req.cookies.forward === '1') && req.session.authenticated) {
+        conn.query('SELECT * FROM players WHERE name = ?', [req.session.uname], (err, results) => {
+            if (!err) {
+                if (!hasBase(req.session.uname)) {
+                    let id = gen.next().value;
+                    addBase({ name: req.session.uname, alliance: req.session.alliance || '', id: req.session.uid }, id)
+                };
+                res.cookie('alliance', results[0].alliance);
+                res.render('game')
+            }
+            if (err) console.log(err.message);
+        })
+        return
+    };
+    if (!req.session.authenticated || req.cookies.remember === '0') return res.status(308).redirect('./login');
+    res.status(308).redirect('./signup');
 })
 app.get('/login', (req, res) => {
     res.render('login', { error: '' })
@@ -82,17 +95,21 @@ app.post('/login', function (req, res) {
         req.body.username, req.body.email
     ], (err, results) => {
         if (!err) {
-            if (!results.length) return res.render('login', { error: 'username does not exist' });
-            if (results[0].userPwd !== hash(req.body.pwd)) return res.render('login', { error: 'You provided a wrong password' });
-            req.session.uname = req.body.username;
-            req.session.uid = results[0].uid;
-            req.session.authenticated = true;
-            if (req.body.remember) res.cookie('remember', 1, { maxAge: new Date(Date.now() + 360000) });
-            res.cookie('sessId', req.sessionID, { maxAge: new Date(Date.now() + 3600000), httpOnly: true });
-            res.cookie('name', req.body.username, { maxAge: new Date(Date.now() + 3600000), overwrite: true });
-            res.render('game');
-            if (hasBase(req.body.username)) return;
-            addBase({ name: req.body.username, alliance: '', id: results[0].uid }, gen.next().value)
+            conn.query('SELECT * FROM players WHERE name = ?', [req.body.username], (err, result) => {
+                if (!err) req.session.alliance = result[0].alliance;
+                if (!results.length) return res.render('login', { error: 'username does not exist' });
+                if (results[0].userPwd !== hash(req.body.pwd)) return res.render('login', { error: 'You provided a wrong password' });
+                req.session.uname = req.body.username;
+                req.session.uid = results[0].uid;
+                req.session.authenticated = true;
+                if (!req.body.remember) res.cookie('remember', 0, { maxAge: new Date(Date.now() + 360000) });
+                if (req.body.remember) res.cookie('remember', 1, { maxAge: new Date(Date.now() + 360000) });
+                res.cookie('forward', '1', { httpOnly: true, maxAge: 1000 * 60 });
+                res.cookie('sessId', req.sessionID, { maxAge: new Date(Date.now() + 3600000), httpOnly: true });
+                res.cookie('name', req.body.username, { maxAge: new Date(Date.now() + 3600000), overwrite: true });
+                res.status(308).redirect('/');
+            })
+
         }
         if (err) console.log(err.message);
     });
@@ -115,13 +132,15 @@ app.post('/signup', (req, res) => {
             resolveNewPlayer(req.body.username, req)
             req.session.authenticated = true;
             req.session.uname = req.body.username;
-            if (req.body.remember) res.cookie('remember', true, { maxAge: new Date(date.now() + 1000 * 60 * 2) })
+            res.cookie('forward', '1', { httpOnly: true, maxAge: 1000 * 60 });
             res.cookie('sessId', req.sessionID, { httpOnly: true, maxAge: 1000 * 60 * 60 * 24 });
             res.cookie('name', req.body.username, { maxAge: 360000, overwrite: true });
-            res.render('game')
-            addBase({ name: req.body.username, alliance: '', level: 0 }, gen.next().value);
+            if (!req.body.remember) res.cookie('remember', 0, { maxAge: new Date(Date.now() + 360000) });
+            if (req.body.remember) res.cookie('remember', 1, { maxAge: new Date(Date.now() + 360000) });
+            res.status(308).redirect('/')
             conn.query("SELECT * FROM users WHERE userName = ? OR userMail = ? ", [req.session.uname], (err, ress) => {
                 req.session.uid = results[0].uid
+                res.cookie('alliance', results)
             })
             console.log('new user ::: ', req.body.username);
         }
@@ -140,8 +159,10 @@ app.post('/createAlliance', (req, res) => {
             ], (err) => {
                 if (err) console.log(err.message);
                 if (!err) {
+                    res.cookie('alliance', req.body.alliname)
                     res.send('alliance made successfully');
-                    updatePlayerAllianceInSql(req.session.uname, req.body.alliname)
+                    updatePlayerAllianceInSql(req.session.uname, req.body.alliname);
+                    updatePlayerAllianceInGame(req.session.uname, req.body.alliname)
                 }
             })
         }
@@ -182,6 +203,7 @@ app.post('/leaveAlliance', (req, res) => {
                     if (err) console.log(err.message);
                     if (!err) {
                         updatePlayerAllianceInSql(req.session.uname, req.body.alliname)
+                        updatePlayerAllianceInGame(req.session.uname, req.body.alliname)
                     }
                 });
                 break
@@ -202,6 +224,7 @@ app.post('/joinAlliance', function (req, res) {
             if (results[0].members.includes(req.session.uname)) return res.send('Already in this alliance');
             conn.query('UPDATE alliances SET members = ? WHERE  name=?', [results[0].members.concat(`member=${req.session.uname};`), req.body.alliname]);
             res.cookie('alliance', results[0].name);
+            updatePlayerAllianceInGame(req.session.uname, results[0].name)
             updatePlayerAllianceInSql(req.session.uname, results[0].name)
             res.send('Joined alliance successfully');
         }
@@ -221,7 +244,8 @@ app.delete('/disbandAlliance', (req, res) => {
             if (!leader.includes(req.session.uname)) return res.send('Forbidden as you are not the alliance leader');
             members.forEach(member => {
                 updatePlayerAllianceInSql(member.split('=')[1], '');
-            })
+                updatePlayerAllianceInGame(member.split('=')[1], '')
+            });
             conn.query("DELETE FROM alliances WHERE name = ?", [
                 results[0].name
             ], (err) => {
@@ -259,7 +283,7 @@ app.post('/playerInfo', (req, res) => {
         })
         return
     }
-    conn.query('SELECT name,score, bases FROM players WHERE name=?', [req.body.playername], (err, results) => {
+    conn.query('SELECT * FROM players WHERE name=?', [req.body.playername], (err, results) => {
         if (!err) res.status(200).json(results[0]);
     });
 });
@@ -307,6 +331,21 @@ server.use((socket, next) => {
     }
 });
 server.on('connection', socket => {
+    clientHandler.resolveAndJoinRoom('global', socket);
+    socket.on('pl-message', (data, room) => {
+        room = room || 'global';
+        let client = clientHandler.findClient(socket.id);
+        clientHandler.resolveAndJoinRoom(room, socket);
+        server.to(room).emit('message', client.name, data)
+    })
+    socket.on('room-leave', room => {
+        let user = clientHandler.findClient(socket.id);
+        clientHandler.removeFromRoom(user, room)
+    })
+    socket.on('rooms', e => {
+        console.log(clientHandler.chatRooms);
+    })
+    socket.broadcast.emit('sys-message', true, socket.id)
     gameLib.bases.forEach(b => {
         server.sockets.to(socket.id).emit('firstConnect-bases', [b.pos.x, b.pos.y, b.id, b.whose, b.flaks.length]);
     });
@@ -362,6 +401,7 @@ server.on('connection', socket => {
     socket.on('disconnect', () => {
         clientHandler.updateClient(clientHandler.findClient(socket.id), false)
         console.log(`Player disconnected ::: id:${socket.id}`);
+        socket.broadcast.emit('sys-message', false, socket.id);
     })
     socket.on('log', () => {
         console.log(clientHandler.clients);
@@ -476,6 +516,36 @@ class Vector {
 }
 //creations class
 let creations = [], captures = [];
+function getPlayerdata(identifier,callback) {
+   conn.query('SELECT * FROM players WHERE name = ? OR uid = ?',[identifier,identifier],(err,results)=>{
+    if (!err) {
+        return callback(results[0])
+    }
+    if(err)console.log(err.message);
+   })
+   return false
+}
+function updateAllPlayersOnNewPlayerBase(server, data) {
+    server.emit(codes.objcodes.base.toString() + codes.actioncodes.creation.toString(), data)
+}
+function updatePlayerAllianceInGame(clientname, alliance) {
+    gameLib.bases.forEach(base => {
+        if (base.whose.name === clientname) {
+            base.whose.alliance = alliance
+        }
+    });
+    gameLib.tanks.forEach(tank => {
+        if (tank.whose.name === clientname) {
+            tank.whose.alliance = alliance
+        }
+    });
+    gameLib.APCs.forEach(apc => {
+        if (apc.whose.name === clientname) {
+            apc.whose.alliance = alliance
+        }
+    });
+    server.emit('update-alli', clientname, alliance)
+}
 function updatePlayerBaseNoInSql(name, number) {
     conn.query('UPDATE players SET bases = ? WHERE  name=? ', [number, name], (err) => {
         if (err) console.log(err);
@@ -536,7 +606,7 @@ function CaptureCard(base, apc) {
     }
 }
 function objsAreAlly(obj1, obj2) {
-    if (obj1.whose.id == obj2.whose.id || obj1.whose.alliance == obj2.whose.alliance && obj2.whose.alliance.length) return true;
+    if ((obj1.whose.id == obj2.whose.id || obj1.whose.alliance == obj2.whose.alliance) && (obj2.whose.alliance.length || obj1.whose.id == obj2.whose.id)) return true;
     return false
 }
 function moveToCaptureBase(base, obj) {
@@ -805,16 +875,7 @@ function Flak(x, y, deg, id) {
         //this should be in the base class:::done
         for (const e of arr.values()) {
             if (circle_collider(this.pos, e.pos, this.range) && !Object.is(obj, e) && !objsAreAlly(obj, e)) {
-                return e;
-            }
-        }
-
-        return false
-    }
-    Flak.prototype.track = function (obj, arr) {
-        //this should be in the base class:::done
-        for (const e of arr.values()) {
-            if (circle_collider(this.pos, e.pos, this.range) && !Object.is(obj, e) && !(e.whose.id == obj.whose.id || e.whose.alliance == obj.whose.alliance)) {
+                console.log(e.whose);
                 return e;
             }
         }
@@ -914,21 +975,27 @@ function Base(x, y, id, whose) {
         }
         if (t) spawnMoveForward(t);
     }
-    Base.prototype.flakCollider = function (arr) {
+    Base.prototype.fireOn = function (obj) {
+        for (let i = 0; i < this.flaks.length; i++) {
+            if (this.flaks[i].rotate(obj, this.id)) {
+                this.flaks[i].fireOn(obj, this.id);
+            }
+        }
+    }
+    Base.prototype.flakCollider = () => {
+        this.target = this.flakTracker(gameLib.APCs)
+        this.target = this.target ? this.target : this.flakTracker(gameLib.tanks);
+        if (!this.target) return;
+        this.fireOn(this.target)
+    }
+    Base.prototype.flakTracker = function (arr) {
         if (!this.flaks.length) return;
         for (const obj of arr.values()) {
-            let done = false;
-            ///second if parameter after && shpuld be alliance or id -done
             if (circle_collider(this.fireCenter, obj.pos, this.flaks[0].range) && !objsAreAlly(this, obj)) {
-                for (let i = 0; i < this.flaks.length; i++) {
-                    if (this.flaks[i].rotate(obj, this.id)) {
-                        this.flaks[i].fireOn(obj, this.id);
-                        done = true;
-                    }
-                }
+                return obj
             }
-            if (done) break;
         }
+        return false
     }
 }
 function checkIfbaseLapping(x, y) {
@@ -953,6 +1020,7 @@ function addBase(whose, id) {
         y = randomIntFromRange(700, mapHeight)
     }
     gameLib.bases.set(id, new Base(x, y, id, whose));
+    updateAllPlayersOnNewPlayerBase(server,[x, y, id, whose,6 ])
 }
 function initBases(n) {
     let b = [];
@@ -983,8 +1051,7 @@ let lastcall;
 //for fast canvas
 function mainloop() {
     gameLib.bases.forEach(base => {
-        base.flakCollider(gameLib.tanks);
-        base.flakCollider(gameLib.APCs);
+        base.flakCollider();
         base.flaks.forEach(flak => {
             flak.removeAsHealth0(base.flaks, base)
         });
@@ -1027,4 +1094,4 @@ setInterval(() => {
 setInterval(() => {
     conn = mysql.createConnection(db.users);
     conn2 = conn.promise();
-}, 1000 * 60 * 60 * 6)
+}, 1000 * 60 * 60 * 6);

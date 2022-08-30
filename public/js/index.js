@@ -190,7 +190,15 @@ function getcookie(key) {
 }
 setTimeout(() => {
     user.name = getcookie('name');
-    user.level = getcookie('lvl') || '';
-    user.alliance = getcookie('alliance') || '';
-    mainMenu.updateUserData(user.name, user.alliance, user.level);
+    fetch('/playerInfo',{
+        method:'post',
+        body:JSON.stringify({playername:getcookie('name')}),
+        headers: { "Content-Type": "application/json" }
+    }).then(data => data.text()).then(data=>{
+        data = JSON.parse(data)
+        user.alliance = data.alliance
+        user.name = data.name
+        user.id = data.uid
+        mainMenu.updateUserData(data.name,data.alliance,"")
+    })
 }, 2000)

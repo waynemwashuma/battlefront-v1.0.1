@@ -1,14 +1,26 @@
 {
-    "flak":{
-        "concrete":50000,
-        "steel":45000
+    "costs":{
+        "flak":{
+            "concrete":50000,
+            "steel":45000
+        },
+        "tank":{
+            "steel":20000,
+            "aluminium":5000
+        },
+        "APC":{
+            "steel":10000,
+            "aluminium":45000
+        }
     },
-    "tank":{
-        "steel":20000,
-        "aluminium":5000
+    "initialRescources":{
+        "steel":1500000,
+        "concrete":2000000,
+        "aluminium":800000
     },
-    "APC":{
-        "steel":10000,
-        "aluminium":45000
+    "initialRescourceIncrease": {
+        "steel": 450,
+        "aluminium": 300,
+        "concrete": 400
     }
 }

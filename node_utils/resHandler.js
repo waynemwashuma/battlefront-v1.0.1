@@ -37,7 +37,7 @@ function ResHandler(initres) {
     this.diff;
     this.calc;
     this.lastUpdate = Date.now();
-    this.update = (currentTimeStamp, callback = () => { }) => {
+    ResHandler.prototype.update = (currentTimeStamp, callback = () => { }) => {
         this.diff = (currentTimeStamp - this.lastUpdate) / 1000;
         for (let i = 0; i < 3; i++) {
             this.calc = Math.round(this.diff * this.res.production[keys[i]] + this.res.actual[keys[i]]);

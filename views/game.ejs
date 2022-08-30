@@ -13,6 +13,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="./js/models.js"></script>
     <script src="./js/mouse.js"></script>
+    <!-- <script defer src="./js/io2.js"></script> -->
     <script defer src="./js/io.js"></script>
     <script src="./js/audio.js"></script>
     <script defer src="./js/ui.js"></script>
@@ -48,12 +49,21 @@
 
         </div>
     </div>
+    <div id="chat-wrapper">
+        <ul id="chat-box"></ul>
+        <div id="chat-inputs">
+            <input name="" id="chat-message" type="text" placeholder="message here..."style="color: black;"></input>
+            <button id="chat-send" style="color: black;">Send</button>
+        </div>
+    </div>
     <div id="can-div">
         <canvas id="c1"></canvas>
         <canvas id="c2"></canvas>
         <canvas id="c3"></canvas>
         <canvas id="c4"></canvas>
         <canvas id="mini"></canvas>
+    </div>
+
 </body>
 
 

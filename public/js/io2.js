@@ -1,12 +1,11 @@
 let sock = io();
-let room = document.querySelector('#room');
+let room;
 let box = document.querySelector('#chat-box');
-let form = document.querySelector('#chat');
-document.querySelector('#chat-butt').onclick = e=>{
+let form = document.querySelector('#chat-message');
+document.querySelector('#chat-send').onclick = e=>{
     sock.emit('pl-message',form.value);
-    if (room.value) sock.emit('room-join',room.value)
+    if (room) sock.emit('room-join',room)
     form.value = '';
-    
 }
 sock.on('sys-message',(...data)=>{
     let t = document.createElement('li');
@@ -22,4 +21,4 @@ sock.on('message',(...data)=>{
     }
     box.append(t)
 });
-sock.on('debug',console.log);
+sock.on('rooms',console.log);

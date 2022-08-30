@@ -1,5 +1,5 @@
 :root {
-    --border-default:5px;
+    --border-default: 5px;
     --black: black;
     --blue1: blue;
     --blue2: royalblue;
@@ -10,6 +10,7 @@
     font-family: Verdana;
 
 }
+
 html {
     width: 100%;
     height: 100vh;
@@ -388,6 +389,54 @@ body {
     border-radius: inherit;
 }
 
+/* chat box */
+#chat-wrapper {
+    z-index: 12;
+    position: absolute;
+    top: 100%;
+    transform: translateY(-105%);
+    width: 250px;
+    height: 200px;
+    min-height: 200px;
+    background-color: rgba(0, 0, 0, 0.9);
+    opacity: 0.7;
+}
+
+#chat-inputs {
+    margin: auto;
+    width: inherit;
+}
+
+#chat-send {
+    margin: 0% auto;
+}
+
+#chat-box {
+    padding-inline-start: 10px;
+    list-style-type: none;
+    height: 80%;
+    margin: 10px 0px 0px;
+    overflow-y: none;
+    font-size: small;
+    overflow-y: auto;
+}
+
+#chat-box::-webkit-scrollbar {
+    display: none;
+}
+
+#chat-box>li {
+    color: white;
+}
+
+.chat-message {
+    width: 95%;
+    height: auto;
+    min-height: 20px;
+    word-wrap: normal;
+}
+
+
 /*main menu*/
 
 #main-menu-butt {
@@ -442,7 +491,7 @@ body {
     top: 50%;
     left: 50%;
     height: auto;
-    background-color:var(--blue2);
+    background-color: var(--blue2);
     height: 500px;
     transform: translate(-50%, -50%);
     border-radius: 5px;
@@ -514,15 +563,18 @@ body {
     height: 80%;
     background-color: green;
 }
-#main-menu-user > div{
+
+#main-menu-user>div {
     display: flex;
     flex-direction: left;
 }
+
 #main-menu-user-name {
     width: 100%;
     height: 40%;
     background-color: chocolate;
 }
+
 #main-menu-user-alli {
     background-color: darksalmon;
     width: 100%;
@@ -536,6 +588,7 @@ body {
     background-color: darkslategray;
 
 }
+
 #main-menu-user-name>label {
     margin-top: auto;
     margin-bottom: auto;
@@ -568,7 +621,7 @@ body {
 
 span {
     line-height: normal;
-    text-align:center;
+    text-align: center;
     margin: 0% auto;
 }
 
@@ -651,16 +704,17 @@ span {
     min-width: 40px;
     height: auto;
     padding: 6px;
-    border-style:ridge;
+    border-style: ridge;
     border-color: var(--blue3);
     border-width: 2px;
     border-radius: var(--border-default);
     margin: 0px auto;
-    overflow:hidden;
+    overflow: hidden;
     font-size: 90%;
     font-variant: small-caps;
     text-align: center;
 }
+
 .player-card {
     color: white;
     display: block;
@@ -971,32 +1025,36 @@ span {
     min-height: 40px;
     background-color: black;
 }
-#alli-card-info-action{
+
+#alli-card-info-action {
     display: flex;
     flex-direction: row;
     width: 90%;
     height: auto;
     margin: 0px auto;
     height: 30px;
-  
+
 }
-#alli-card-info-join-butt{
+
+#alli-card-info-join-butt {
     border-radius: 5px;
     text-align: center;
     height: auto;
     background-color: var(--blue1);
-    padding:5px 1em;
+    padding: 5px 1em;
     margin: auto;
-    
+
 }
-#alli-card-info-disband-butt{
+
+#alli-card-info-disband-butt {
     border-radius: 5px;
     text-align: center;
     height: auto;
     background-color: var(--blue1);
-    padding:5px 1em;
+    padding: 5px 1em;
     margin: auto;
 }
+
 #alli-card-members-table {
     margin-top: 10%;
     width: 100%;
@@ -1052,10 +1110,12 @@ span {
     background-color: blue;
     height: auto;
 }
+
 #create-alli-butt:hover {
     text-decoration: underline;
 
 }
+
 .name {
     margin-left: 5%;
     display: block;
@@ -1148,7 +1208,7 @@ label {
 }
 
 @media only screen and (max-width:600px) {
-    #mini{
+    #mini {
         width: 160px;
     }
 }

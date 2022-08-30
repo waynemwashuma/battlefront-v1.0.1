@@ -35,6 +35,11 @@ socket.on(codes.objcodes.tank.toString() + codes.actioncodes.creation.toString()
     let tank = new Tank(...data);
     gameLib.tanks.set(data[2], tank);
 });
+socket.on(codes.objcodes.base.toString()+codes.actioncodes.creation.toString(),data=>{
+    let base = new Base(...data);
+    gameLib.bases.set(data[2], base);
+})
+
 socket.on(codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(), data => {
     let A = new APC(...data);
     gameLib.APCs.set(data[2], A);
@@ -66,7 +71,6 @@ socket.on(codes.actioncodes.destruction.toString(), data => {
 });
 socket.on('fire', data => {
     if (data[0] == 'turrent') {
-        console.log(data[3]);
         if (data[3]) {
             gameLib.bullets.push(new Bullet(gameLib.tanks.get(data[1]), gameLib.bases.get(data[3]).flaks[gameLib.bases.get(data[3]).flaks.length - 1]))
         }
@@ -85,7 +89,52 @@ socket.on('game-error', data => {
 })
 socket.on('base-creation', data => {
     gameLib.bases.set(data[2], new Base(...data))
+});
+let room;
+let box = document.querySelector('#chat-box');
+let form = document.querySelector('#chat-message');
+document.querySelector('#chat-send').onclick = e=>{
+    socket.emit('pl-message',form.value);
+    if (room) socket.emit('room-join',room)
+    form.value = '';
+}
+socket.on('sys-message',(...data)=>{
+    let t = document.createElement('li');
+    t.innerHTML = data[1] +' has '+(data[0]?'connected':'disconnected');
+    box.append(t)
 })
+socket.on('message',(...data)=>{
+    if (!data[0] || !data[1]) return;
+    let t = document.createElement('li');
+        t.innerHTML = data[0] +':'+data[1];
+    box.append(t);
+    box.scroll({ top: box.scrollHeight, behavior: 'smooth' });
+});
+function updatePlayerAllianceInGame(clientname,alliance){
+    console.log(`${clientname}::${alliance}`);
+    gameLib.bases.forEach(base=>{
+        if (base.whose.name === clientname) {
+            base.whose.alliance = alliance
+        }
+    });
+    gameLib.tanks.forEach(tank=>{
+        if (tank.whose.name === clientname) {
+            tank.whose.alliance = alliance
+        }
+    });
+    gameLib.APCs.forEach(apc=>{
+        if (apc.whose.name === clientname) {
+            apc.whose.alliance = alliance;
+        }
+    })
+    if (user.name === clientname) {
+        user.alliance = alliance
+    }
+}
+socket.on('update-alli',(...data)=>{
+    updatePlayerAllianceInGame(data[0],data[1])   
+})
+socket.on('rooms',console.log);
 socket.on('log', console.log)
 //emit target base intended to produce the vehicle --done//
 //placed in creatoncard class{res.js}//

@@ -1,0 +1,10 @@
+{
+    "creation": 1001,
+    "occupation": 1002,
+    "damage": 1003,
+    "destruction": 1004,
+    "movement": 1005,
+    "update":1006,
+    "playerMessage":1050,
+    "systemMessage":1051
+}

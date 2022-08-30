@@ -261,7 +261,7 @@ let mainMenu = (function () {
     let infoAdmin = info.appendChild(document.createElement('div'));
     infoAdmin.setAttribute('id', 'alli-card-info-admin');
     let actionDiv = info.appendChild(document.createElement('div'));
-    actionDiv.setAttribute('id','alli-card-info-action');
+    actionDiv.setAttribute('id', 'alli-card-info-action');
     let joinAllianceButt = actionDiv.appendChild(document.createElement('div'));
     joinAllianceButt.setAttribute('id', 'alli-card-info-join-butt')
     joinAllianceButt.innerHTML = 'Join';
@@ -405,7 +405,7 @@ let mainMenu = (function () {
         divs.userNamep.innerHTML = name.toString();
     }
     function showAllicard(x) {
-        let rrr, sss,le;
+        let rrr, sss, le;
         fetchAllianceData('./allianceInfo', x.target.parentElement.children[0].outerText, data => {
             data = JSON.parse(data);
             memberBody.innerHTML = '';
@@ -413,13 +413,18 @@ let mainMenu = (function () {
             infoDesc.innerHTML = data.desciption;
             sss = data.members.split(';');
             sss.pop();
-            if (!data.members.includes(user.name)) joinAllianceButt.innerHTML='Join';
-            if (data.members.includes(user.name)) joinAllianceButt.innerHTML='Leave';
+            if (!data.members.includes(user.name)) joinAllianceButt.innerHTML = 'Join';
+            if (data.members.includes(user.name)) joinAllianceButt.innerHTML = 'Leave';
             for (let i = 0; i < sss.length; i++) {
                 sss[i] = sss[i].split('=')
             }
             for (let i = 0; i < sss.length; i++) {
-                if (sss[i][0] == 'leader' && sss[i][1] == user.name) disbandAllianceButt.style.display = 'initial';
+                console.log(sss);
+                if (sss[i][0] == 'leader' && sss[i][1] == user.name) {
+                    disbandAllianceButt.style.display = 'initial'
+                    joinAllianceButt.style.display = 'none';
+
+                };
                 rrr = memberBody.appendChild(document.createElement('tr'));
                 rrr.innerHTML = `<td class=\'member-name\'>${sss[i][0]} :: ${sss[i][1]}</tr>`
             }
@@ -428,15 +433,14 @@ let mainMenu = (function () {
 
             }
             divs.body.append(allianceCard);
-            if (getcookie('alliance') == data.name)joinAllianceButt.innerHTML = 'Leave';
-            if (getcookie('alliance') && getcookie('alliance') == data.name) return joinAllianceButt.style.display = 'none';
-            if (!getcookie('alliance') == data.name)joinAllianceButt.innerHTML = 'Join';
+            if (user.alliance === data.name) joinAllianceButt.innerHTML = 'Leave';
+            if (user.alliance !== data.name) joinAllianceButt.innerHTML = 'Join';
         });
     }
     function appendAlli() {
         let rrr;
         fetchAllianceData('/allianceInfo', '*', data => {
-        alliContent.bodyTable.replaceChildren(alliContent.bodyTableHead,createAliiButt)
+            alliContent.bodyTable.replaceChildren(alliContent.bodyTableHead, createAliiButt)
             if (!data.includes('{')) return alert('', data);
             data = JSON.parse(data);
             for (let i = 0; i < data.length; i++) {
@@ -461,23 +465,23 @@ let mainMenu = (function () {
         e.append(...f)
         communityContent.table.append(e)
     }
-    function fetchPlayerData(name,callback) {
-        fetch('/playerInfo',{
-            method:'post',
-            body:JSON.stringify({playername:name}),
+    function fetchPlayerData(name, callback) {
+        fetch('/playerInfo', {
+            method: 'post',
+            body: JSON.stringify({ playername: name }),
             headers: { "Content-Type": "application/json" }
-    }).then(data=>data.text()).then(callback)
+        }).then(data => data.text()).then(callback)
     }
     function showPlayerCARD() {
-        
+
     }
     function appendPlayers() {
         communityContent.table.replaceChildren(communityContent.tableHeader)
-        fetchPlayerData('*',(data)=>{
-            if (!data.includes('{'))return alert('',data);
+        fetchPlayerData('*', (data) => {
+            if (!data.includes('{')) return alert('', data);
             data = JSON.parse(data);
             for (let i = 0; i < data.length; i++) {
-                newCARD(data[i].name,data[i].alliance,data[i].bases)
+                newCARD(data[i].name, data[i].alliance, data[i].bases)
             }
         })
     }
@@ -485,10 +489,10 @@ let mainMenu = (function () {
         if (x.target.outerText.toLocaleLowerCase() == 'join') {
             fetch('/joinAlliance', {
                 method: 'post',
-                body: JSON.stringify({alliname: infoName.outerText }),
+                body: JSON.stringify({ alliname: infoName.outerText }),
                 headers: { "Content-Type": "application/json" }
             }).then(data => data.text()).then(data => {
-                alert('',data);
+                alert('', data);
                 console.log(data);
             })
             return
@@ -496,22 +500,22 @@ let mainMenu = (function () {
         if (x.target.outerText.toLocaleLowerCase() == 'leave') {
             fetch('/leaveAlliance', {
                 method: 'post',
-                body: JSON.stringify({alliname:infoName.outerText }),
+                body: JSON.stringify({ alliname: infoName.outerText }),
                 headers: { "Content-Type": "application/json" }
             }).then(data => data.text()).then(data => {
-                alert('',data)
+                alert('', data)
                 console.log(data);
             })
         }
 
     }
     function disbandAlliance() {
-        fetch('disbandAlliance',{
+        fetch('disbandAlliance', {
             method: 'DELETE',
             body: JSON.stringify({ alliname: infoName.outerText }),
             headers: { "Content-Type": "application/json" }
-        }).then(data=>data.text()).then(data=>{
-            alert('',data)
+        }).then(data => data.text()).then(data => {
+            alert('', data)
         })
     }
     joinAllianceButt.onclick = joinOrLeaveAlli;
@@ -519,6 +523,6 @@ let mainMenu = (function () {
     return {
         appendPlayerData: newCARD,
         updateUserData: update,
-        appendAlliances:appendAlli
+        appendAlliances: appendAlli
     }
 })();
