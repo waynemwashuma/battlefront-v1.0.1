@@ -75,7 +75,7 @@ app.get('/',(req, res) => {
                     let id = gen.next().value;
                     addBase({ name: req.session.uname, alliance: req.session.alliance || '', id: req.session.uid }, id)
                 };
-                res.cookie('alliance', results[0].alliance);
+                //res.cookie('alliance', results[0].alliance);
                 res.render('game')
             }
             if (err) console.log(err.message);
