@@ -7,7 +7,7 @@ const db = require('./node_utils/db')
 const cookie = require('cookie');
 const express = require('express');
 const app = express();
-const http = require('http').createServer(app)
+const http = require('http').createServer(app);
 const mysqlStore = require('express-mysql-session')(sessionHandler);
 const port = process.env.PORT || 3000;
 const io = require('socket.io').Server;
@@ -38,7 +38,7 @@ function Client(sessid, uid, name, socketid) {
 function hash(data) {
     return crypto.createHash('sha512').update(data).digest('hex')
 }
-async function resolveNewPlayer(name, req) {
+function resolveNewPlayer(name, req) {
     conn.query('SELECT * FROM users WHERE userName = ?', [name], (err, results) => {
         if (!err) {
             conn.query('INSERT INTO players(uid,name,score,bases) VALUES (?,?,?,?)', [results[0].uid, results[0].userName, 0, 1], (err) => {
