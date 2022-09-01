@@ -96,6 +96,7 @@ app.post('/login', function (req, res) {
         if (!err) {
             conn.query('SELECT * FROM players WHERE name = ?', [req.body.username], (err, result) => {
                 if (!err) req.session.alliance = result[0].alliance;
+                if(!result.length) return res.render('login',{error:'please try logging in again'}) && resolveNewPlayer(req.body.username);
                 if (!results.length) return res.render('login', { error: 'username does not exist' });
                 if (results[0].userPwd !== hash(req.body.pwd)) return res.render('login', { error: 'You provided a wrong password' });
                 req.session.uname = req.body.username;
