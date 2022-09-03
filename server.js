@@ -68,6 +68,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '4kb' }));
 app.get('/',(req, res) => {
+    console.log(req.session);
     if ((req.cookies.remember === '1' || req.cookies.forward === '1') && req.session.authenticated) {
         conn.query('SELECT * FROM players WHERE name = ?', [req.session.uname], (err, results) => {
             if (!err) {
