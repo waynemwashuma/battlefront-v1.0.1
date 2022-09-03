@@ -39,7 +39,7 @@ function hash(data) {
     return crypto.createHash('sha512').update(data).digest('hex')
 }
 function resolveNewPlayer(name, req) {
-    conn.query('SELECT * FROM users WHERE userName = ?', [name], (err, results) => {
+    conn.query('SELECT * FROM users WHERE userName = ? OR userMail = ?', [name,name], (err, results) => {
         if (!err) {
             conn.query('INSERT INTO players(uid,name,score,bases) VALUES (?,?,?,?)', [results[0].uid, results[0].userName, 0, 1], (err) => {
                 if (err) console.log(err.message);
@@ -95,9 +95,8 @@ app.post('/login', function (req, res) {
     ], (err, results) => {
         if (!err) {
             conn.query('SELECT * FROM players WHERE name = ?', [req.body.username], (err, result) => {
-                if (!err) req.session.alliance = result[0].alliance;
-                if(!result.length) return res.render('login',{error:'please try logging in again'}) && resolveNewPlayer(req.body.username);
-                if (!results.length) return res.render('login', { error: 'username does not exist' });
+                if (!result.length && results.length) return res.render('login', { error: 'username does not exist' });
+                if(!result.length) return res.render('login',{error:'please try logging in again'}) && resolveNewPlayer(req.body.username,req);
                 if (results[0].userPwd !== hash(req.body.pwd)) return res.render('login', { error: 'You provided a wrong password' });
                 req.session.uname = req.body.username;
                 req.session.uid = results[0].uid;
@@ -138,10 +137,6 @@ app.post('/signup', (req, res) => {
             if (!req.body.remember) res.cookie('remember', 0, { maxAge: new Date(Date.now() + 360000) });
             if (req.body.remember) res.cookie('remember', 1, { maxAge: new Date(Date.now() + 360000) });
             res.status(308).redirect('/')
-            conn.query("SELECT * FROM users WHERE userName = ? OR userMail = ? ", [req.session.uname], (err, ress) => {
-                req.session.uid = results[0].uid
-                res.cookie('alliance', results)
-            })
             console.log('new user ::: ', req.body.username);
         }
         if (err) console.log(err.message);
@@ -336,7 +331,8 @@ server.on('connection', socket => {
         room = room || 'global';
         let client = clientHandler.findClient(socket.id);
         clientHandler.resolveAndJoinRoom(room, socket);
-        server.to(room).emit('message', client.name, data)
+        //add room selection later
+        server.emit('message', client.name, data)
     })
     socket.on('room-leave', room => {
         let user = clientHandler.findClient(socket.id);
