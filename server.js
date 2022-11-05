@@ -1,4 +1,5 @@
 //////server global variables////
+
 const sessionHandler = require('express-session');
 const clientHandler = require('./node_utils/chatconfig');
 const resHandler = require('./node_utils/resHandler');
@@ -39,7 +40,7 @@ function hash(data) {
     return crypto.createHash('sha512').update(data).digest('hex')
 }
 function resolveNewPlayer(name, req) {
-    conn.query('SELECT * FROM users WHERE userName = ? OR userMail = ?', [name,name], (err, results) => {
+    conn.query('SELECT * FROM users WHERE userName = ? OR userMail = ?', [name, name], (err, results) => {
         if (!err) {
             conn.query('INSERT INTO players(uid,name,score,bases) VALUES (?,?,?,?)', [results[0].uid, results[0].userName, 0, 1], (err) => {
                 if (err) console.log(err.message);
@@ -67,7 +68,7 @@ app.use(sessionHandler(config));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '4kb' }));
-app.get('/',(req, res) => {
+app.get('/', (req, res) => {
     if ((req.cookies.remember === '1' || req.cookies.forward === '1') && req.session.authenticated) {
         conn.query('SELECT * FROM players WHERE name = ?', [req.session.uname], (err, results) => {
             if (!err) {
@@ -96,7 +97,7 @@ app.post('/login', function (req, res) {
         if (!err) {
             conn.query('SELECT * FROM players WHERE name = ?', [req.body.username], (err, result) => {
                 if (!result.length && results.length) return res.render('login', { error: 'username does not exist' });
-                if(!result.length) return res.render('login',{error:'please try logging in again'}) && resolveNewPlayer(req.body.username,req);
+                if (!result.length) return res.render('login', { error: 'please try logging in again' }) && resolveNewPlayer(req.body.username, req);
                 if (results[0].userPwd !== hash(req.body.pwd)) return res.render('login', { error: 'You provided a wrong password' });
                 req.session.uname = req.body.username;
                 req.session.uid = results[0].uid;
@@ -512,14 +513,14 @@ class Vector {
 }
 //creations class
 let creations = [], captures = [];
-function getPlayerdata(identifier,callback) {
-   conn.query('SELECT * FROM players WHERE name = ? OR uid = ?',[identifier,identifier],(err,results)=>{
-    if (!err) {
-        return callback(results[0])
-    }
-    if(err)console.log(err.message);
-   })
-   return false
+function getPlayerdata(identifier, callback) {
+    conn.query('SELECT * FROM players WHERE name = ? OR uid = ?', [identifier, identifier], (err, results) => {
+        if (!err) {
+            return callback(results[0])
+        }
+        if (err) console.log(err.message);
+    })
+    return false
 }
 function updateAllPlayersOnNewPlayerBase(server, data) {
     server.emit(codes.objcodes.base.toString() + codes.actioncodes.creation.toString(), data)
@@ -1015,7 +1016,7 @@ function addBase(whose, id) {
         y = randomIntFromRange(700, mapHeight)
     }
     gameLib.bases.set(id, new Base(x, y, id, whose));
-    updateAllPlayersOnNewPlayerBase(server,[x, y, id, whose,6 ])
+    updateAllPlayersOnNewPlayerBase(server, [x, y, id, whose, 6])
 }
 function initBases(n) {
     let b = [];
