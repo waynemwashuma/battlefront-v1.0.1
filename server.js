@@ -86,6 +86,22 @@ app.get('/', (req, res) => {
     if (!req.session.authenticated || req.cookies.remember === '0') return res.status(308).redirect('./login');
     res.status(308).redirect('./signup');
 })
+
+
+app.post('/path',(req,res)=>{
+    console.log(req.body);
+})
+app.post('/confirm',(req,res)=>{
+    console.log('----confirm---');
+    console.log(req.body);
+    
+})
+app.post('/validate',(req,res)=>{
+    console.log('----validate---');
+    console.log(req.body);
+})
+
+
 app.get('/login', (req, res) => {
     res.render('login', { error: '' })
 })
