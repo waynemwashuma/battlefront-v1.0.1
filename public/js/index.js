@@ -58,13 +58,6 @@ Array.prototype.remove = function (value) {
     this.push(...w);
 }
 /////global variables/////
-//game objects` library
-var gameLib = {
-    bases: new Map(),
-    tanks: new Map(),
-    bullets: new Array(),
-    APCs: new Map()
-}
 //////closure variables///////
 //variables for base class;
 //bullet variable
