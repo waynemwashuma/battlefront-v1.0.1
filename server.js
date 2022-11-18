@@ -752,6 +752,15 @@ Array.prototype.remove = function (value) {
 function randomIntFromRange(min, max) {
     return Math.round((Math.random() * (max - min)) + min)
 }
+function emitToAll(event,data) {
+    server.sockets.emit(event,data)
+}
+function emitToRoom(event,room,data) {
+    server.to(room).emit(event,data)
+}
+function emitTosockets(params) {
+    
+}
 /////global variables/////
 //game objects` library
 let gameLib = {

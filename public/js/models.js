@@ -1,7 +1,13 @@
+//game object store
+var gameLib = {
+    bases: new Map(),
+    tanks: new Map(),
+    bullets: new Array(),
+    APCs: new Map()
+}
+//variables for flak class
 let mapWidth = 20000, mapHeight = 20000;
 let baseWidth = 700, baseHeight = 400, turrentSpacing = 5, turrentRadius = 20, maxFlaks = 10, spawnWidth = 250, spawnHeight = 100;
-
-//variables for flak class
 let flakHeight, flakWidth, flakRadius = 20;
 
 class Vector {
