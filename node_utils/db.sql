@@ -32,5 +32,3 @@ CREATE TABLE IF NOT EXISTS sql_errors(
     ErrTime VARCHAR(30) NOT NULL,
     ErrMessage VARCHAR(500) NOT NULL
 );
-INSERT INTO users(userId,userName,userMail,userPwd) VALUES (NULL,'test','test@mail.com','123');
-INSERT INTO players(uid,name,score,bases) VALUES (1,'test',12,2);
