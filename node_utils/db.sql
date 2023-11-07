@@ -1,0 +1,36 @@
+CREATE DATABASE IF NOT EXISTS BFLogin;
+USE BFLogin;
+CREATE TABLE IF NOT EXISTS users(
+    userId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    userName VARCHAR(20) NOT NULL UNIQUE ,
+    userMail VARCHAR(50) NOT NULL UNIQUE,
+    userPwd VARCHAR(200) NOT NULL
+);
+CREATE TABLE IF NOT EXISTS players(
+    uid INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(20) NOT NULL UNIQUE ,
+    score  VARCHAR(20),
+    bases INT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS resources(
+    PlayerId INT NOT NULL PRIMARY KEY,
+    PlayerName VARCHAR(20) NOT NULL,
+    Concrete INT DEFAULT 0,
+    Steel INT DEFAULT 0,
+    Aluminium INT DEFAULT 0,
+    Fuel INT DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS alliances(
+    AllianceId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(20) NOT NULL UNIQUE ,
+    description VARCHAR(300) NOT NULL UNIQUE,
+    members VARCHAR(500) NOT NULL UNIQUE,
+    bases INT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS sql_errors(
+    ErrId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    ErrTime VARCHAR(30) NOT NULL,
+    ErrMessage VARCHAR(500) NOT NULL
+);
+INSERT INTO users(userId,userName,userMail,userPwd) VALUES (NULL,'test','test@mail.com','123');
+INSERT INTO players(uid,name,score,bases) VALUES (1,'test',12,2);
