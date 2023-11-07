@@ -3,9 +3,14 @@ let login ={
   user: process.env.MYSQLUSER || 'root',
   password: process.env.MYSQLPASSWORD || '',
   database:process.env.MYSQLDATABASE || 'BFlogin',
-  port:process.env.MYSQLPORT
+  port:process.env.MYSQLPORT || 3306
 }
 let sess = {
+  host: login.host,
+  user: login.user,
+  password: login.password,
+  database:login.database,
+  port:login.port,
   expiration:1000*60*60*6,
   createDatabaseTable:true,
   schema:{
