@@ -5,12 +5,13 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js",
+    "dev": "nodemon ./server/index.js",
     "start": "node server.js"
   },
   "keywords": [
     "battlefront"
   ],
+  "type":"module",
   "author": "wayne mwashuma",
   "license": "ISC",
   "dependencies": {
