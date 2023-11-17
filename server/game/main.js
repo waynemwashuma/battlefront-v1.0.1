@@ -8,10 +8,8 @@ import {
     Tank,
     Flak
 } from "./objects/index.js";
-
-
 export const creations = [], captures = [];
-export function getPlayerdata(identifier, callback) {
+function getPlayerdata(identifier, callback) {
     conn.query('SELECT * FROM players WHERE name = ? OR uid = ?', [identifier, identifier], (err, results) => {
         if (!err) {
             return callback(results[0])
@@ -19,9 +17,6 @@ export function getPlayerdata(identifier, callback) {
         if (err) console.log(err.message);
     })
     return false
-}
- function updateAllPlayersOnNewPlayerBase(server, data) {
-    server.emit(codes.objcodes.base.toString() + codes.actioncodes.creation.toString(), data)
 }
 export function updatePlayerAllianceInGame(clientname, alliance) {
     gameLib.bases.forEach(base => {
@@ -41,21 +36,7 @@ export function updatePlayerAllianceInGame(clientname, alliance) {
     });
     server.emit('update-alli', clientname, alliance)
 }
-function updatePlayerBaseNoInSql(name, number) {
-    conn.query('UPDATE players SET bases = ? WHERE  name=? ', [number, name], (err) => {
-        if (err) console.log(err);
-    })
-}
-function updatePlayerScoreInSql(name, number) {
-    conn.query('UPDATE players SET score = ? WHERE  name=? ', [number, name], (err) => {
-        if (err) console.log(err);
-    })
-}
-function updatePlayerAllianceInSql(name, alliance) {
-    conn.query('UPDATE players SET alliance = ? WHERE  name=? ', [alliance, name], (err) => {
-        if (err) console.log(err);
-    })
-}
+
 function emitGameError(error, id) {
     server.sockets.to(id).emit('game-error', error)
 }
@@ -68,7 +49,10 @@ function validateObjBelongToSender(obj, client) {
     return false
 }
 function objsAreAlly(obj1, obj2) {
-    if ((obj1.whose.id == obj2.whose.id || obj1.whose.alliance == obj2.whose.alliance) && (obj2.whose.alliance.length || obj1.whose.id == obj2.whose.id)) return true;
+    if (
+        (obj1.whose.id === obj2.whose.id || obj1.whose.alliance === obj2.whose.alliance) &&
+        (obj2.whose.alliance.length || obj1.whose.id === obj2.whose.id)
+    ) return true;
     return false
 }
 function moveToCaptureBase(base, obj) {
@@ -201,15 +185,7 @@ Array.prototype.remove = function (value) {
 function randomIntFromRange(min, max) {
     return Math.round((Math.random() * (max - min)) + min)
 }
-function emitToAll(event, data) {
-    server.sockets.emit(event, data)
-}
-function emitToRoom(event, room, data) {
-    server.to(room).emit(event, data)
-}
-function emitTosockets(params) {
 
-}
 /////global variables/////
 //game objects` library
 let gameLib = {
@@ -238,13 +214,13 @@ function checkIfbaseLapping(x, y) {
     }
     return false
 }
-function hasBase(name) {
+export function hasBase(name) {
     for (const vl of gameLib.bases.values()) {
         if (vl.whose.name == name) return true;
     }
     return false
 }
-function addBase(whose, id) {
+export function addBase(whose, id) {
     let x = randomIntFromRange(700, mapWidth),
         y = randomIntFromRange(700, mapHeight);
     while (checkIfbaseLapping(x, y)) {
@@ -252,7 +228,6 @@ function addBase(whose, id) {
         y = randomIntFromRange(700, mapHeight)
     }
     gameLib.bases.set(id, new Base(x, y, id, whose));
-    updateAllPlayersOnNewPlayerBase(server, [x, y, id, whose, 6])
 }
 function initBases(n) {
     let b = [];
@@ -298,6 +273,23 @@ function mainloop() {
         apc.removeAsHealth0(gameLib.APCs);
     })
 }
+function mainloop() {
+    gameLib.bases.forEach(base => {
+        base.flakCollider();
+        base.flaks.forEach(flak => {
+            flak.removeAsHealth0(base.flaks, base)
+        });
+    })
+    gameLib.tanks.forEach((tank) => {
+        tank.updateTurrent();
+        tank.removeAsHealth0(gameLib.tanks);
+        tank.move();
+    });
+    gameLib.APCs.forEach(apc => {
+        apc.move();
+        apc.removeAsHealth0(gameLib.APCs);
+    })
+}
 setInterval(mainloop, 1000 / 60);
 setInterval(() => {
     gameLib.bases.forEach(base => {
@@ -323,7 +315,3 @@ setInterval(() => {
         })
     })
 }, 1000);
-setInterval(() => {
-    conn = mysql.createConnection(db.users);
-    conn2 = conn.promise();
-}, 1000 * 60 * 60 * 6);
