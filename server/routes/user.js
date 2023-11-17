@@ -1,5 +1,5 @@
 import {Router} from 'express'
-import { conn } from "../constants.js"
+import { conn,gen } from "../constants.js"
 import crypto from "crypto"
 
 function hasBase(params) {

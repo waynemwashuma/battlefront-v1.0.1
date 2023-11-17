@@ -17,3 +17,9 @@ conn.connect(function (err) {
     if (err) console.log('1st err', err.message);
     console.log(" mysql Connected!");
 });
+function* generator() {
+  for (let i = 0; i < Infinity; i++) {
+      yield i
+  }
+}
+export const gen = generator();
