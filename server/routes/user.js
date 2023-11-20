@@ -1,6 +1,7 @@
 import {Router} from 'express'
 import { conn,gen } from "../constants.js"
 import crypto from "crypto"
+import { addBase } from '../game/index.js'
 
 function hasBase(params) {
     

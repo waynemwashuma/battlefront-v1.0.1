@@ -169,7 +169,10 @@ export function addBase(whose, id) {
         x = randomIntFromRange(700, mapWidth);
         y = randomIntFromRange(700, mapHeight)
     }
-    gameLib.bases.set(id, new Base(x, y, id, whose));
+    const base = new Base(x, y, id, whose)
+    base.gameLib = gameLib
+    gameLib.bases.set(id, base);
+
 }
 export function initBases(n) {
     let b = [];
