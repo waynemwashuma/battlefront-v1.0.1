@@ -10,3 +10,12 @@ export function updatePlayerAllianceInSql(name, alliance) {
         if (err) console.log(err);
     })
 }
+export function getPlayerdata(identifier, callback) {
+    DBpool.query('SELECT * FROM players WHERE name = ? OR uid = ?', [identifier, identifier], (err, results) => {
+        if (!err) {
+            return callback(results[0])
+        }
+        if (err) console.log(err.message);
+    })
+    return false
+}

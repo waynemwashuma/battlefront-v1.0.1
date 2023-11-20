@@ -74,7 +74,7 @@ function debug(server, socket) {
 function findRoomUsers(room) {
     return clients.filter(client => client.rooms.includes(room))
 }
-module.exports = {
+export {
     isAllichat,
     findClient,
     destroyClient,

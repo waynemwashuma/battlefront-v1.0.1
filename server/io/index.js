@@ -1,5 +1,6 @@
 import { DBpool } from "../constants.js";
-import { Server } from 'socket.io'
+import { Server } from 'socket.io' 
+import {Vector,avoidAllCollision,CaptureCard,captures,gameLib,clientHandler} from '../game/index.js'
 
 export const io = new Server();
 
@@ -102,3 +103,35 @@ io.on('connection', socket => {
         console.log(clientHandler.clients);
     })
 });
+export function emitGameError(error, id) {
+    io.sockets.to(id).emit('game-error', error)
+}
+function validateObjBelongToSender(obj, client) {
+    if (client) {
+        if (client.uid === obj.whose.id) {
+            return true
+        }
+    }
+    return false
+}
+function moveToCaptureBase(base, obj) {
+    if (objsAreAlly(obj, base)) {
+        clientHandler.clients.forEach(c => {
+            if (c.name == obj.whose.name) {
+                emitGameError('You cannot capture an allied base', c.socketid)
+            }
+        });
+        return
+    }
+    if (base.flaks.length > 0) {
+        clientHandler.clients.forEach(c => {
+            if (c.name == obj.whose.name) {
+                server.to(c.socketid).emit('game-error', 'Destroy the flaks on the base first');
+            }
+        });
+        return
+    }
+    obj.moveTo.push(...avoidAllCollision(new Vector(base.actualSpawnPoint.x, base.actualSpawnPoint.y + 150), obj, gameLib.bases))
+    obj.moveTo.push(base.actualSpawnPoint.copy());
+    captures.push(new CaptureCard(base, obj));
+}

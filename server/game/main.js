@@ -1,23 +1,10 @@
+import { baseHeight, baseWidth, codes, gen } from "../constants.js";
 import { Vector } from "./math/vector.js";
 import {
-    CaptureCard,
-    CreationCard,
-    Vehicle,
-    Base,
-    APC,
-    Tank,
-    Flak
+    Base
 } from "./objects/index.js";
+import  * as clientHandler from "../node_utils/chatconfig.js";
 export const creations = [], captures = [];
-function getPlayerdata(identifier, callback) {
-    conn.query('SELECT * FROM players WHERE name = ? OR uid = ?', [identifier, identifier], (err, results) => {
-        if (!err) {
-            return callback(results[0])
-        }
-        if (err) console.log(err.message);
-    })
-    return false
-}
 export function updatePlayerAllianceInGame(clientname, alliance) {
     gameLib.bases.forEach(base => {
         if (base.whose.name === clientname) {
@@ -34,48 +21,9 @@ export function updatePlayerAllianceInGame(clientname, alliance) {
             apc.whose.alliance = alliance
         }
     });
-    server.emit('update-alli', clientname, alliance)
+    //server.emit('update-alli', clientname, alliance)
 }
 
-function emitGameError(error, id) {
-    server.sockets.to(id).emit('game-error', error)
-}
-function validateObjBelongToSender(obj, client) {
-    if (client) {
-        if (client.uid === obj.whose.id) {
-            return true
-        }
-    }
-    return false
-}
-function objsAreAlly(obj1, obj2) {
-    if (
-        (obj1.whose.id === obj2.whose.id || obj1.whose.alliance === obj2.whose.alliance) &&
-        (obj2.whose.alliance.length || obj1.whose.id === obj2.whose.id)
-    ) return true;
-    return false
-}
-function moveToCaptureBase(base, obj) {
-    if (objsAreAlly(obj, base)) {
-        clientHandler.clients.forEach(c => {
-            if (c.name == obj.whose.name) {
-                emitGameError('You cannot capture an allied base', c.socketid)
-            }
-        });
-        return
-    }
-    if (base.flaks.length > 0) {
-        clientHandler.clients.forEach(c => {
-            if (c.name == obj.whose.name) {
-                server.to(c.socketid).emit('game-error', 'Destroy the flaks on the base first');
-            }
-        });
-        return
-    }
-    obj.moveTo.push(...avoidAllCollision(new Vector(base.actualSpawnPoint.x, base.actualSpawnPoint.y + 150), obj, gameLib.bases))
-    obj.moveTo.push(base.actualSpawnPoint.copy());
-    captures.push(new CaptureCard(base, obj));
-}
 function commonValues(arr1, arr2) {
     let filteredArray = [];
     for (let i = 0; i < this.length; i++) {
@@ -151,7 +99,7 @@ function avoidCollision(pos, destination, obs) {
     }
     return [sorted[0]]
 }
-function avoidAllCollision(destination, obj, arr) {
+export function avoidAllCollision(destination, obj, arr) {
     let s = [], t = [];
     arr.forEach(e => {
         if (!lineToRect(obj.pos, destination, e)) return;
@@ -188,20 +136,14 @@ function randomIntFromRange(min, max) {
 
 /////global variables/////
 //game objects` library
-let gameLib = {
+export const gameLib = {
     bases: new Map(),
     tanks: new Map(),
     APCs: new Map()
 }
 //variables for base class;
 const mapWidth = 20000, mapHeight = 20000;
-const baseWidth = 700,
-    baseHeight = 400,
-    turrentSpacing = 5,
-    turrentRadius = 20,
-    maxFlaks = 10,
-    spawnWidth = 250,
-    spawnHeight = 100;
+
 //variables for flak class
 let flakRadius = 20;
 /////classes for game objects///////
@@ -229,7 +171,7 @@ export function addBase(whose, id) {
     }
     gameLib.bases.set(id, new Base(x, y, id, whose));
 }
-function initBases(n) {
+export function initBases(n) {
     let b = [];
     for (let i = 0; i < n; i++) {
         let x = randomIntFromRange(2000, mapHeight);
@@ -246,33 +188,16 @@ function initBases(n) {
                 }
             }
         }
-        let base = new Base(x, y, id, { name: '', alliance: '' });
+        let base = new Base(x, y, id, { name: '', alliance: '' })
+        base.gameLib = gameLib
         b.push(base)
         base.spawn(codes.objcodes.flak)
         gameLib.bases.set(id, base);
     }
 };
-initBases(50);
+
 ////////////the game logic loops/////////////
-let lastcall;
 //for fast canvas
-function mainloop() {
-    gameLib.bases.forEach(base => {
-        base.flakCollider();
-        base.flaks.forEach(flak => {
-            flak.removeAsHealth0(base.flaks, base)
-        });
-    })
-    gameLib.tanks.forEach((tank) => {
-        tank.updateTurrent();
-        tank.removeAsHealth0(gameLib.tanks);
-        tank.move();
-    });
-    gameLib.APCs.forEach(apc => {
-        apc.move();
-        apc.removeAsHealth0(gameLib.APCs);
-    })
-}
 function mainloop() {
     gameLib.bases.forEach(base => {
         base.flakCollider();

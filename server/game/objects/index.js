@@ -1,3 +1,4 @@
+import { baseHeight, baseWidth, codes, flakRadius, gen, maxFlaks, spawnHeight, spawnWidth, turrentRadius, turrentSpacing } from "../../constants.js";
 import {Vector} from "../math/vector.js"
 
 export function CreationCard(objcode, base) {
@@ -28,7 +29,7 @@ export function CaptureCard(base, apc) {
     this.base = base;
     CaptureCard.prototype.capture = function () {
         if (base.actualSpawnPoint.copy().subtract(apc.pos.copy()).mag() < 10) {
-            apc.capture(this.base, gameLib.APCs)
+            apc.capture(this.base, this.gameLib.APCs)
             captures.remove(this);
         }
     }
@@ -105,9 +106,9 @@ export class Tank extends Vehicle {
         Tank.prototype.updateTurrent = function () {
             let id;
             this.turrent.pos = this.pos;
-            this.target = this.turrent.track(this, gameLib.tanks);
-            this.target = this.target ? this.target : this.turrent.track(this, gameLib.APCs);
-            this.target = this.target ? this.target : this.turrent.trackFlaks(this, gameLib.bases)
+            this.target = this.turrent.track(this, this.gameLib.tanks);
+            this.target = this.target ? this.target : this.turrent.track(this, this.gameLib.APCs);
+            this.target = this.target ? this.target : this.turrent.trackFlaks(this, this.gameLib.bases)
             if (this.target instanceof Array) {
                 id = this.target[1]
                 this.target = this.target[0]
@@ -198,8 +199,8 @@ export function Base(x, y, id, whose) {
     this.name = 'base';
     this.id = id;
     this.pos = new Vector(x, y);
-    this.w = baseWidth;
-    this.h = baseHeight;
+    this.w = baseHeight;
+    this.h = baseWidth;
     this.vertice = [
         new Vector(x, y),
         new Vector(x + this.w, y),
@@ -237,17 +238,17 @@ export function Base(x, y, id, whose) {
         switch (code) {
             case codes.objcodes.tank:
                 t = new Tank(this.actualSpawnPoint.x, this.actualSpawnPoint.y, obid, this.whose, 90);
-                gameLib.tanks.set(obid, t);
-                server.emit(codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(), [t.pos.x, t.pos.y, t.id, t.whose, t.deg]);
+                this.gameLib.tanks.set(obid, t);
+                //server.emit(codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(), [t.pos.x, t.pos.y, t.id, t.whose, t.deg]);
                 break;
             case codes.objcodes.APC:
                 t = new APC(this.actualSpawnPoint.x, this.actualSpawnPoint.y, obid, this.whose, 90);
-                gameLib.APCs.set(obid, t);
-                server.emit(codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(), [t.pos.x, t.pos.y, t.id, t.whose, t.deg]);
+                this.gameLib.APCs.set(obid, t);
+                //server.emit(codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(), [t.pos.x, t.pos.y, t.id, t.whose, t.deg]);
                 break;
             default:
                 addFlak(this);
-                server.emit(codes.objcodes.flak.toString() + codes.actioncodes.creation.toString(), [this.id, this.flaks[this.flaks.length - 1].pos]);
+                //server.emit(codes.objcodes.flak.toString() + codes.actioncodes.creation.toString(), [this.id, this.flaks[this.flaks.length - 1].pos]);
                 break;
         }
         if (t) spawnMoveForward(t);
@@ -260,8 +261,8 @@ export function Base(x, y, id, whose) {
         }
     }
     Base.prototype.flakCollider = () => {
-        this.target = this.flakTracker(gameLib.APCs)
-        this.target = this.target ? this.target : this.flakTracker(gameLib.tanks);
+        this.target = this.flakTracker(this.gameLib.APCs)
+        this.target = this.target ? this.target : this.flakTracker(this.gameLib.tanks);
         if (!this.target) return;
         this.fireOn(this.target)
     }
@@ -274,4 +275,12 @@ export function Base(x, y, id, whose) {
         }
         return false
     }
+}
+
+function objsAreAlly(obj1, obj2) {
+    if (
+        (obj1.whose.id === obj2.whose.id || obj1.whose.alliance === obj2.whose.alliance) &&
+        (obj2.whose.alliance.length || obj1.whose.id === obj2.whose.id)
+    ) return true;
+    return false
 }
