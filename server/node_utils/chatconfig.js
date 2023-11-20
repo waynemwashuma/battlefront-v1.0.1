@@ -1,4 +1,4 @@
-import { ResHandler } from "./resHandler.js"
+import {ResHandler} from './resHandler.js'
 Array.prototype.remove = function (value) {
     let w = this.findIndex(client => client.socketid == id);
     if (w == -1) return;

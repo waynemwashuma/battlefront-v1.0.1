@@ -1,5 +1,5 @@
 let keys;
-var initialProductionCost = {
+export const initialProductionCost = {
     tank: {
         steel: 45000,
         aluminium: 30000
@@ -13,7 +13,7 @@ var initialProductionCost = {
         steel: 20000
     }
 };
-function ResHandler(initres) {
+export function ResHandler(initres) {
     this.res = {
         max: {
             steel: 4500000,
@@ -47,14 +47,9 @@ function ResHandler(initres) {
         callback(this.res.actual);
     }
 }
-function deductFromRes(client, objString) {
+export function deductFromRes(client, objString) {
     let c = Object.keys(initialProductionCost[objString]);
     for (let i = 0; i < c.length; i++) {
         client.resHandler.res.actual[c[i]] -= initialProductionCost[objString][c[i]];
     }
-}
-export {
-    ResHandler,
-    initialProductionCost,
-    deductFromRes
 }
