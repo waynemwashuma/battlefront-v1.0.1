@@ -1,6 +1,7 @@
 import { DBpool } from "../constants.js";
 import { Server } from 'socket.io' 
-import {Vector,avoidAllCollision,CaptureCard,captures,gameLib,clientHandler} from '../game/index.js'
+import {Vector,avoidAllCollision,CaptureCard,captures,gameLib} from '../game/index.js'
+import * as clientHandler from "../node_utils/chatconfig.js";
 
 export const io = new Server();
 
