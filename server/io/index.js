@@ -1,13 +1,17 @@
-server.use((socket, next) => {
+import { DBpool } from "../constants.js";
+import { Server } from 'socket.io'
+
+export const io = new Server();
+
+io.use((socket, next) => {
     if (typeof socket.handshake.headers.cookie !== "string") return next(new Error('unathorized'));
     if (!cookie.parse(socket.handshake.headers.cookie).sessId) return next(new Error('unathorized'));
     if (typeof socket.handshake.headers.cookie === "string") {
         let sid = cookie.parse(socket.handshake.headers.cookie), sd;
         if (typeof sid.sessId === "undefined") {
-            console.log('no session made for user');
             return next(new Error('unathorized'))
         } else {
-            conn.query('SELECT * FROM sessions WHERE sessId=?', [sid.sessId], (err, results) => {
+            DBpool.query('SELECT * FROM sessions WHERE sessId=?', [sid.sessId], (err, results) => {
                 if (!err) {
                     if (!results.length) return next(new Error('unathorized'));
                     if (Date.now() < results[0].expires) console.log('session expired');
@@ -20,14 +24,14 @@ server.use((socket, next) => {
         }
     }
 });
-server.on('connection', socket => {
+io.on('connection', socket => {
     clientHandler.resolveAndJoinRoom('global', socket);
     socket.on('pl-message', (data, room) => {
         room = room || 'global';
         let client = clientHandler.findClient(socket.id);
         clientHandler.resolveAndJoinRoom(room, socket);
         //add room selection later
-        server.emit('message', client.name, data)
+        io.emit('message', client.name, data)
     })
     socket.on('room-leave', room => {
         let user = clientHandler.findClient(socket.id);
@@ -38,13 +42,13 @@ server.on('connection', socket => {
     })
     socket.broadcast.emit('sys-message', true, socket.id)
     gameLib.bases.forEach(b => {
-        server.sockets.to(socket.id).emit('firstConnect-bases', [b.pos.x, b.pos.y, b.id, b.whose, b.flaks.length]);
+        io.sockets.to(socket.id).emit('firstConnect-bases', [b.pos.x, b.pos.y, b.id, b.whose, b.flaks.length]);
     });
     gameLib.tanks.forEach(b => {
-        server.sockets.to(socket.id).emit('firstConnect-tanks', [b.pos.x, b.pos.y, b.id, b.whose, b.deg]);
+        io.sockets.to(socket.id).emit('firstConnect-tanks', [b.pos.x, b.pos.y, b.id, b.whose, b.deg]);
     });
     gameLib.APCs.forEach(b => {
-        server.sockets.to(socket.id).emit('firstConnect-APCs', [b.pos.x, b.pos.y, b.id, b.whose, b.deg]);
+        io.sockets.to(socket.id).emit('firstConnect-APCs', [b.pos.x, b.pos.y, b.id, b.whose, b.deg]);
     });
     socket.on(codes.actioncodes.occupation.toString(), e => {
         let client = clientHandler.findClient(socket.id);
@@ -98,17 +102,3 @@ server.on('connection', socket => {
         console.log(clientHandler.clients);
     })
 });
-
-
-
-
-
-export function emitToAll(event, data) {
-    server.sockets.emit(event, data)
-}
-export function emitToRoom(event, room, data) {
-    server.to(room).emit(event, data)
-}
-export function emitTosockets(params) {
-
-}
