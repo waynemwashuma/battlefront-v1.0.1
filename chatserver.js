@@ -10,6 +10,7 @@ http.listen(port,()=>{
     console.log('listening on',port);
 });
 app.use('/',express.static(path.join(__dirname,'public')))
+console.log(__dirname)
 app.get('/',(req,res)=>{
     res.sendFile(__dirname+'/public/test.html')
 });

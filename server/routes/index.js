@@ -2,6 +2,7 @@ import sessionHandler from "express-session";
 import  express from "express";
 import  Mysql from "express-mysql-session";
 import cookieParser from "cookie-parser";
+import path from 'path'
 
 import { conn2 } from "../constants.js";
 import { AllianceRouter } from "./alliance.js";
@@ -53,3 +54,4 @@ app.use(express.json({ limit: '4kb' }));
 app.use("/", UserRouter)
 app.use("/", PlayerRouter)
 app.use("/", AllianceRouter)
+app.use(express.static("./public"))
