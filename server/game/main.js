@@ -3,7 +3,7 @@ import { Vector } from "./math/vector.js";
 import {
     Base
 } from "./objects/index.js";
-import  * as clientHandler from "../node_utils/chatconfig.js";
+import * as clientHandler from "../node_utils/chatconfig.js";
 export const creations = [], captures = [];
 export function updatePlayerAllianceInGame(clientname, alliance) {
     gameLib.bases.forEach(base => {
@@ -136,16 +136,88 @@ function randomIntFromRange(min, max) {
 
 /////global variables/////
 //game objects` library
+export const VehicleType = {
+    TANK: 0,
+    BASE: 1,
+    APC: 2
+}
 export const gameLib = {
     bases: new Map(),
     tanks: new Map(),
-    APCs: new Map()
+    APCs: new Map(),
+    _listeners: {},
+    add(entity, type) {
+        entity.gameLib = this
+        switch (type) {
+            case VehicleType.TANK:
+                this.tanks.set(entity.id, entity)
+                break;
+            case VehicleType.APC:
+                this.APCs.set(entity.id, entity)
+                break;
+            case VehicleType.BASE:
+                this.bases.set(entity.id, entity)
+                break;
+        }
+        this.triggerListener('add', {
+            type,
+            entity
+        })
+    },
+    get(entity, type) {
+        let id = entity.id
+        switch (type) {
+            case VehicleType.TANK:
+                return this.tanks.get(id)
+            case VehicleType.APC:
+                return this.APCs.get(id)
+            case VehicleType.BASE:
+                return this.bases.get(id)
+        }
+    },
+    has(entity, type) {
+        let id = entity.id
+        switch (type) {
+            case VehicleType.TANK:
+                return this.tanks.has(id)
+            case VehicleType.APC:
+                return this.APCs.has(id)
+            case VehicleType.BASE:
+                return this.bases.has(id)
+        }
+    },
+    remove(entity, type) {
+        let id = entity.id
+        switch (type) {
+            case VehicleType.TANK:
+                return this.tanks.delete(id)
+            case VehicleType.APC:
+                return this.APCs.delete(id)
+            case VehicleType.BASE:
+                return this.bases.delete(id)
+        }
+        this.triggerListener('remove', {
+            type,
+            entity
+        })
+    },
+    addListener(name, listener) {
+        if (name in this._listeners)
+            return this._listeners[name].push(listener)
+        this._listeners[name] = [listener]
+    },
+    triggerListener(name, data) {
+        if (!(name in this._listeners)) return
+        let list = this._listeners[name]
+
+        for (let i = 0; i < list.length; i++) {
+            list[i](data)
+        }
+    }
 }
 //variables for base class;
 const mapWidth = 20000, mapHeight = 20000;
 
-//variables for flak class
-let flakRadius = 20;
 /////classes for game objects///////
 //vehicle class
 function checkIfbaseLapping(x, y) {
@@ -171,8 +243,7 @@ export function addBase(whose) {
         y = randomIntFromRange(700, mapHeight)
     }
     const base = new Base(x, y, id, whose)
-    base.gameLib = gameLib
-    gameLib.bases.set(id, base);
+    gameLib.add(base,VehicleType.BASE);
 
 }
 export function initBases(n) {
@@ -193,10 +264,9 @@ export function initBases(n) {
             }
         }
         let base = new Base(x, y, id, { name: '', alliance: '' })
-        base.gameLib = gameLib
         b.push(base)
         base.spawn(codes.objcodes.flak)
-        gameLib.bases.set(id, base);
+        gameLib.add(base,VehicleType.BASE);
     }
 };
 
@@ -238,9 +308,5 @@ setInterval(() => {
     captures.forEach(c => {
         c.capture();
     })
-    clientHandler.clients.forEach(c => {
-        c.resHandler.update(Date.now(), () => {
-            //server.sockets.to(c.socketid).emit('res-update', c.resHandler.res.actual)
-        })
-    })
+    gameLib.triggerListener('res-update')
 }, 1000);

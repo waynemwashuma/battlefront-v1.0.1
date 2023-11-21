@@ -4,9 +4,11 @@ import { objsAreAlly } from "./index.js";
 import { Flak } from "./Flak.js";
 import { Tank } from "./Tank.js";
 import { APC } from "./APC.js";
+import { VehicleType } from "../main.js";
 
 //base class
 export function Base(x, y, id, whose) {
+    this.gameLib = null
     this.name = 'base';
     this.id = id;
     this.pos = new Vector(x, y);
@@ -48,13 +50,11 @@ export function Base(x, y, id, whose) {
         switch (code) {
             case codes.objcodes.tank:
                 t = new Tank(this.actualSpawnPoint.x, this.actualSpawnPoint.y, obid, this.whose, 90);
-                this.gameLib.tanks.set(obid, t);
-                //server.emit(codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(), [t.pos.x, t.pos.y, t.id, t.whose, t.deg]);
+                this.gameLib.add(t,VehicleType.TANK)
                 break;
             case codes.objcodes.APC:
                 t = new APC(this.actualSpawnPoint.x, this.actualSpawnPoint.y, obid, this.whose, 90);
-                this.gameLib.APCs.set(obid, t);
-                //server.emit(codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(), [t.pos.x, t.pos.y, t.id, t.whose, t.deg]);
+                this.gameLib.add(t, VehicleType.APC);
                 break;
             default:
                 addFlak(this);

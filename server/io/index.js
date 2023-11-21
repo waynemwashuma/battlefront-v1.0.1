@@ -1,6 +1,6 @@
 import { DBpool, codes } from "../constants.js";
 import { Server } from 'socket.io'
-import { Vector, avoidAllCollision, CaptureCard, captures, gameLib, creations, addBase, hasBase } from '../game/index.js'
+import { Vector, avoidAllCollision, CaptureCard, captures, gameLib, creations, addBase, hasBase, VehicleType } from '../game/index.js'
 import * as clientHandler from "../node_utils/chatconfig.js";
 import cookie from 'cookie'
 
@@ -56,47 +56,48 @@ io.on('connection', socket => {
     gameLib.APCs.forEach(b => {
         io.sockets.to(socket.id).emit('firstConnect-APCs', [b.pos.x, b.pos.y, b.id, b.whose, b.deg]);
     });
+
     socket.on(codes.actioncodes.occupation.toString(), e => {
         let client = clientHandler.findClient(socket.id);
-        if (!gameLib.APCs.has(e[1])) return;
-        if (!validateObjBelongToSender(gameLib.APCs.get(e[1]), client)) return;
-        moveToCaptureBase(gameLib.bases.get(e[0]), gameLib.APCs.get(e[1]));
+        if (!gameLib.has(e[1], VehicleType.APC)) return;
+        if (!validateObjBelongToSender(gameLib.get(e[1], VehicleType.APC), client)) return;
+        moveToCaptureBase(gameLib.get(e[0], VehicleType.BASE), gameLib.get(e[1], VehicleType.APC));
     });
     socket.on(codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(), e => {
         let client = clientHandler.findClient(socket.id)
-        if (!gameLib.bases.has(e)) return;
+        if (!gameLib.has(e, VehicleType.BASE)) return;
 
         //for some weird reason,this request is being recieved twice per every creation request by client,this fixes that...temporarily.
         if (creations.find(b => b.base.id == e)) return;
-        if (!validateObjBelongToSender(gameLib.bases.get(e), client)) return;
+        if (!validateObjBelongToSender(gameLib.get(e, VehicleType.BASE), client)) return;
         resHandler.deductFromRes(client, 'tank')
-        creations.push(new CreationCard(codes.objcodes.tank, gameLib.bases.get(e)))
+        creations.push(new CreationCard(codes.objcodes.tank, gameLib.get(e, VehicleType.BASE)))
     });
     socket.on(codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(), e => {
         let client = clientHandler.findClient(socket.id);
-        if (!gameLib.bases.has(e)) return;
+        if (!gameLib.has(e, VehicleType.BASE)) return;
         if (creations.find(b => b.base.id == e)) return;
-        if (!validateObjBelongToSender(gameLib.bases.get(e), client)) return;
+        if (!validateObjBelongToSender(gameLib.get(e, VehicleType.BASE), client)) return;
         resHandler.deductFromRes(client, 'APC');
-        creations.push(new CreationCard(codes.objcodes.APC, gameLib.bases.get(e)))
+        creations.push(new CreationCard(codes.objcodes.APC, gameLib.get(e, VehicleType.BASE)))
     });
     socket.on(codes.objcodes.flak.toString() + codes.actioncodes.creation.toString(), e => {
         let client = clientHandler.findClient(socket.id);
-        if (!gameLib.bases.has(e)) return;
+        if (!gameLib.has(e, VehicleType.BASE)) return;
         if (creations.find(b => b.base.id == e)) return;
-        if (!validateObjBelongToSender(gameLib.bases.get(e), client)) return;
+        if (!validateObjBelongToSender(gameLib.get(e, VehicleType.BASE), client)) return;
         resHandler.deductFromRes(client, 'flak')
-        creations.push(new CreationCard(codes.objcodes.flak, gameLib.bases.get(e)))
+        creations.push(new CreationCard(codes.objcodes.flak, gameLib.get(e, VehicleType.BASE)))
     });
     socket.on(codes.actioncodes.movement.toString(), e => {
         let client = clientHandler.findClient(socket.id);
-        if (gameLib.tanks.has(e[0])) {
-            if (!validateObjBelongToSender(gameLib.tanks.get(e[0]), client)) return;
-            gameLib.tanks.get(e[0]).moveTo.unshift(...avoidAllCollision(new Vector(e[1].x, e[1].y), gameLib.tanks.get(e[0]), gameLib.bases))
+        if (gameLib.has(e[0], VehicleType.TANK)) {
+            if (!validateObjBelongToSender(gameLib.get(e[0], VehicleType.TANK), client)) return;
+            gameLib.get(e[0], VehicleType.TANK).moveTo.unshift(...avoidAllCollision(new Vector(e[1].x, e[1].y), gameLib.get(e[0], VehicleType.TANK), gameLib.bases))
         };
-        if (gameLib.APCs.has(e[0])) {
-            if (!validateObjBelongToSender(gameLib.APCs.get(e[0]), client)) return;
-            gameLib.APCs.get(e[0]).moveTo.unshift(...avoidAllCollision(new Vector(e[1].x, e[1].y), gameLib.APCs.get(e[0]), gameLib.bases))
+        if (gameLib.has(e[0], VehicleType.APC)) {
+            if (!validateObjBelongToSender(gameLib.get(e[0], VehicleType.APC), client)) return;
+            gameLib.get(e[0], VehicleType.APC).moveTo.unshift(...avoidAllCollision(new Vector(e[1].x, e[1].y), gameLib.get(e[0], VehicleType.APC), gameLib.bases))
         };
     });
     socket.on('disconnect', () => {
@@ -140,3 +141,46 @@ function moveToCaptureBase(base, obj) {
     obj.moveTo.push(base.actualSpawnPoint.copy());
     captures.push(new CaptureCard(base, obj));
 }
+gameLib.addListener('add', ev => {
+    let t = ev.entity
+    switch (ev.type) {
+        case VehicleType.TANK:
+            io.sockets.emit(
+                codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(),
+                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
+            );
+            break;
+        case VehicleType.APC:
+            io.sockets.emit(
+                codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(),
+                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
+            );
+            break;
+        case VehicleType.BASE:
+            io.sockets.emit(
+                codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(),
+                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
+            );
+    }
+})
+/*gameLib.addListener("remove", ev => {
+    let t = ev.entity
+    switch (ev.type) {
+        case VehicleType.TANK:
+            io.sockets.emit(
+                codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(),
+                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
+            );
+            break;
+        case VehicleType.APC:
+            io.sockets.emit(
+                codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(),
+                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
+            );
+            break;
+        case VehicleType.BASE:
+            io.sockets.emit(
+                codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(),
+                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
+            );
+})*/
