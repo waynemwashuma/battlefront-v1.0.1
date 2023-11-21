@@ -1,7 +1,8 @@
-import { DBpool } from "../constants.js";
-import { Server } from 'socket.io' 
-import {Vector,avoidAllCollision,CaptureCard,captures,gameLib} from '../game/index.js'
+import { DBpool, codes } from "../constants.js";
+import { Server } from 'socket.io'
+import { Vector, avoidAllCollision, CaptureCard, captures, gameLib, creations, addBase, hasBase } from '../game/index.js'
 import * as clientHandler from "../node_utils/chatconfig.js";
+import cookie from 'cookie'
 
 export const io = new Server();
 
@@ -18,7 +19,10 @@ io.use((socket, next) => {
                     if (!results.length) return next(new Error('unathorized'));
                     if (Date.now() < results[0].expires) console.log('session expired');
                     sd = JSON.parse(results[0].data);
-                    clientHandler.resolveClient(sd.uid, sd.uname, socket.id);
+                    clientHandler.resolveClient(sd.uid, sd.username, socket.id);
+                    if (!hasBase(sd.username)) {
+                        addBase({ name: sd.username, alliance: sd.alliance || '', id: sd.uid })
+                    };
                     next();
                 }
                 if (err) console.log(err.message);

@@ -1,28 +1,19 @@
 import {Router} from 'express'
-import { DBpool,gen } from "../constants.js"
+import { DBpool } from "../constants.js"
 import crypto from "crypto"
-import { addBase } from '../game/index.js'
 
-function hasBase(params) {
-    
-}
 const router  = Router()
 router.get('/', (req, res) => {
     if ((req.cookies.remember === '1' || req.cookies.forward === '1') && req.session.authenticated) {
         DBpool.query('SELECT * FROM players WHERE name = ?', [req.session.username], (err, results) => {
             if (!err) {
-                if (!hasBase(req.session.username)) {
-                    let id = gen.next().value;
-                    addBase({ name: req.session.username, alliance: req.session.alliance || '', id: req.session.uid }, id)
-                };
-                //res.cookie('alliance', results[0].alliance);
                 res.render('game')
             }
             if (err) console.log(err.message);
         })
         return
     };
-    if (!req.session.authenticated || req.cookies.remember === '0') return res.status(308).redirect('./login');
+    if (!req.session.authenticated || req.cookies.remember === '0') return res.status(308).redirect('./login');    
     res.status(308).redirect('./signup');
 })
 router.get('/login', (req, res) => {
@@ -38,8 +29,8 @@ router.post('/login', function (req, res) {
                 if (!result.length && results.length) return res.render('login', { error: 'username does not exist' });
                 if (!result.length) return res.render('login', { error: 'please try logging in again' }) && resolveNewPlayer(req.body.username, req);
                 if (results[0].userPwd !== hash(req.body.pwd)) return res.render('login', { error: 'You provided a wrong password' });
-                req.session.username = req.body.username;
-                req.session.uid = results[0].uid;
+                req.session.username = result[0].name;
+                req.session.uid = result[0].uid;
                 req.session.authenticated = true;
                 if (!req.body.remember) res.cookie('remember', 0, { maxAge: new Date(Date.now() + 360000) });
                 if (req.body.remember) res.cookie('remember', 1, { maxAge: new Date(Date.now() + 360000) });
@@ -93,7 +84,7 @@ function hash(data) {
 function resolveNewPlayer(name, req) {
     DBpool.query('SELECT * FROM users WHERE userName = ? OR userMail = ?', [name, name], (err, results) => {
         if (!err) {
-            DBpool.query('INSERT INTO players(uid,name,score,bases) VALUES (?,?,?,?)', [results[0].uid, results[0].userName, 0, 1], (err) => {
+            DBpool.query('INSERT INTO players(uid,name,score,bases) VALUES (?,?,?,?)', [results[0].userId, results[0].userName, 0, 0], (err) => {
                 if (err) console.log(err.message);
                 req.session.uid = results[0].uid;
             });

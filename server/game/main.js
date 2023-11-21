@@ -162,7 +162,8 @@ export function hasBase(name) {
     }
     return false
 }
-export function addBase(whose, id) {
+export function addBase(whose) {
+    let id = gen.next().value
     let x = randomIntFromRange(700, mapWidth),
         y = randomIntFromRange(700, mapHeight);
     while (checkIfbaseLapping(x, y)) {
@@ -239,7 +240,7 @@ setInterval(() => {
     })
     clientHandler.clients.forEach(c => {
         c.resHandler.update(Date.now(), () => {
-            server.sockets.to(c.socketid).emit('res-update', c.resHandler.res.actual)
+            //server.sockets.to(c.socketid).emit('res-update', c.resHandler.res.actual)
         })
     })
 }, 1000);
