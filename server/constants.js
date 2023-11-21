@@ -7,9 +7,7 @@ export const login = {
   database: process.env.MYSQLDATABASE || 'BFlogin',
   port: process.env.MYSQLPORT || 3306
 }
-export const conn = mysql.createConnection(login);
-export const DBpool = mysql.createPool({})
-export const conn2 = conn.promise();
+export const DBpool = mysql.createPool(login)
 
 export const mapWidth = 20000,
   mapHeight = 20000,
@@ -36,11 +34,6 @@ export const codes = {
     base: 500
   }
 }
-
-conn.connect(function (err) {
-  if (err) console.log('1st err', err.message);
-  console.log(" mysql Connected!");
-});
 function* generator() {
   for (let i = 0; i < Infinity; i++) {
     yield i

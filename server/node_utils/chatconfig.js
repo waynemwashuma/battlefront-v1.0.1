@@ -1,10 +1,10 @@
-import {ResHandler} from './resHandler.js'
+import { ResHandler } from './resHandler.js'
 Array.prototype.remove = function (value) {
     let w = this.findIndex(client => client.socketid == id);
     if (w == -1) return;
     return this.splice(w, 1)[0]
 }
-let clients = [];
+const clients = [];
 function Client(uid, name, socketid) {
     this.name = name;
     this.uid = uid;
@@ -15,7 +15,7 @@ function Client(uid, name, socketid) {
     this.socketid = socketid;
     this.rooms = [];
 }
-let chatRooms = [
+const chatRooms = [
     {
         name: 'global',
         role: 'root',
@@ -29,27 +29,31 @@ function findClient(id) {
     return clients.find(client => client.socketid === id);
 }
 function createClient(uid, name, socketid) {
-    if (clients.find(client => client.uid === uid)) return;
-    clients.push(new Client(uid, name, socketid))
+    let client = clients.find(client => client.uid === uid)
+    if (client) return client
+    client = new Client(uid, name, socketid);
+    clients.push(client)
+    return client
 }
 function destroyClient(id) {
     return clients.remove(findClient(id))
 }
 function updateClient(client, online, socketid, next) {
-    if (client === undefined) return;
+    if (client === void 0) return null;
     if (online) {
         client.online = online;
         client.lastlogin = Date.now();
         client.socketid = socketid;
-    } else if (!online) {
-        client.online = online;
-        client.lastOnline = Date.now();
+        return client
     }
+    client.online = online;
+    client.lastOnline = Date.now();
+    return client
 }
 function resolveClient(id, name, socketid) {
     let client = findClient(id);
     if (client) return updateClient(client, true, socketid);
-    createClient(id, name, socketid)
+    return createClient(id, name, socketid)
 }
 function resolveAndJoinRoom(room, socket, alliance = '') {
     let resolved = chatRooms.find(e => e.name == room), client = findClient(socket.id)
@@ -58,6 +62,7 @@ function resolveAndJoinRoom(room, socket, alliance = '') {
         client.rooms.push(room);
         socket.join(room);
     }
+    //console.log(clients);
 }
 function findRoom(room) {
     chatRooms.find(e => e.name === room)

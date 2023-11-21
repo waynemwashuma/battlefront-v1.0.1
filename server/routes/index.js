@@ -4,7 +4,7 @@ import  Mysql from "express-mysql-session";
 import cookieParser from "cookie-parser";
 import path from 'path'
 
-import { conn2 } from "../constants.js";
+import { DBpool } from "../constants.js";
 import { AllianceRouter } from "./alliance.js";
 import { PlayerRouter } from "./player.js";
 import { UserRouter } from "./user.js";
@@ -42,7 +42,7 @@ let config = {
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 3600000, secure: false, httpOnly: true, secure: false },
-    store: new mysqlStore(sessionConfig, conn2)
+    store: new mysqlStore(sessionConfig)
 }
 app.use(express.query());
 app.set('view engine', 'ejs')
