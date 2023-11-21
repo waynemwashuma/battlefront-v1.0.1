@@ -66,11 +66,11 @@ io.on('connection', socket => {
     socket.on(codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(), e => {
         let client = clientHandler.findClient(socket.id)
         if (!gameLib.has(e, VehicleType.BASE)) return;
-
         //for some weird reason,this request is being recieved twice per every creation request by client,this fixes that...temporarily.
         if (creations.find(b => b.base.id == e)) return;
         if (!validateObjBelongToSender(gameLib.get(e, VehicleType.BASE), client)) return;
         resHandler.deductFromRes(client, 'tank')
+        
         creations.push(new CreationCard(codes.objcodes.tank, gameLib.get(e, VehicleType.BASE)))
     });
     socket.on(codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(), e => {
@@ -145,6 +145,7 @@ gameLib.addListener('add', ev => {
     let t = ev.entity
     switch (ev.type) {
         case VehicleType.TANK:
+            console.log(t);
             io.sockets.emit(
                 codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(),
                 [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
@@ -158,7 +159,7 @@ gameLib.addListener('add', ev => {
             break;
         case VehicleType.BASE:
             io.sockets.emit(
-                codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(),
+                codes.objcodes.base.toString() + codes.actioncodes.creation.toString(),
                 [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
             );
     }

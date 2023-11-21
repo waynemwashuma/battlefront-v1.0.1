@@ -164,8 +164,7 @@ export const gameLib = {
             entity
         })
     },
-    get(entity, type) {
-        let id = entity.id
+    get(id, type) {
         switch (type) {
             case VehicleType.TANK:
                 return this.tanks.get(id)
@@ -175,8 +174,7 @@ export const gameLib = {
                 return this.bases.get(id)
         }
     },
-    has(entity, type) {
-        let id = entity.id
+    has(id, type) {
         switch (type) {
             case VehicleType.TANK:
                 return this.tanks.has(id)
@@ -299,6 +297,7 @@ setInterval(() => {
     gameLib.tanks.forEach(tank => {
         tank.turrent.reload -= 1000
     })
+    //console.log(creations);
     creations.forEach(c => {
         if (c.timer <= 0) {
             c.remove(creations)
