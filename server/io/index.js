@@ -188,7 +188,7 @@ gameLib.addListener("move", ev => {
 gameLib.addListener("rotate", ev => {
     io.sockets.emit('vehicle-rotate', ev);
 })
-gameLib.addListener("flak-rotate", ev => {
+gameLib.addListener("flak-rotate", ev => { 
     io.sockets.emit('flak-rotate', ev);
 })
 gameLib.addListener("base-rename", ev => {
@@ -223,6 +223,7 @@ gameLib.addListener("remove", ev => {
 })
 gameLib.addListener('res-update', () => {
     clientHandler.clients.forEach(c => {
-        io.sockets.to(c.socketid).emit('res-update', c.resHandler.res.actual)
+        c.resHandler.update()
+        io.sockets.to(c.socketid).emit('res-update', c.resHandler.res.actual)         
     })
 })

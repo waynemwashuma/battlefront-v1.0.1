@@ -18,13 +18,13 @@ function determineFlakpos(that, n) {
     return [xt, that.pos.y + that.h + turrentRadius + turrentSpacing];
 }
 export class Base {
-    constructor(x, y, id, whose) {
+    constructor(x, y, whose) {
         this.gameLib = null
         this.name = 'base';
-        this.id = id;
+        this.id = gen.next().value;
         this.pos = new Vector(x, y);
-        this.w = baseHeight;
-        this.h = baseWidth;
+        this.w = baseWidth;
+        this.h = baseHeight;
         this.vertice = [
             new Vector(x, y),
             new Vector(x + this.w, y),

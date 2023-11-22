@@ -18,7 +18,9 @@ export const mapWidth = 20000,
   maxFlaks = 10,
   spawnWidth = 250,
   spawnHeight = 100,
-  flakRadius = 20
+  flakRadius = 20,
+  flakHeight =5,
+   flakWidth = 5
 export const codes = {
   actioncodes: {
     creation: 1001,

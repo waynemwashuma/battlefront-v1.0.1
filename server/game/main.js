@@ -127,14 +127,13 @@ export function hasBase(name) {
     return false
 }
 export function addBase(whose) {
-    let id = gen.next().value
     let x = randomIntFromRange(700, mapWidth),
         y = randomIntFromRange(700, mapHeight);
     while (checkIfbaseLapping(x, y)) {
         x = randomIntFromRange(700, mapWidth);
         y = randomIntFromRange(700, mapHeight)
     }
-    const base = new Base(x, y, id, whose)
+    const base = new Base(x, y, whose)
     gameLib.add(base, VehicleType.BASE);
 
 }
@@ -155,7 +154,7 @@ export function initBases(n) {
                 }
             }
         }
-        let base = new Base(x, y, id, { name: '', alliance: '' })
+        let base = new Base(x, y, { name: '', alliance: '' })
         b.push(base)
         gameLib.add(base, VehicleType.BASE);
         base.spawn(codes.objcodes.flak)

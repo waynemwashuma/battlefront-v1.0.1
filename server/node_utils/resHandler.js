@@ -37,14 +37,14 @@ export function ResHandler(initres) {
     this.diff;
     this.calc;
     this.lastUpdate = Date.now();
-    ResHandler.prototype.update = (currentTimeStamp, callback = () => { }) => {
+    ResHandler.prototype.update = () => {
+        let currentTimeStamp = Date.now()
         this.diff = (currentTimeStamp - this.lastUpdate) / 1000;
         for (let i = 0; i < 3; i++) {
             this.calc = Math.round(this.diff * this.res.production[keys[i]] + this.res.actual[keys[i]]);
             this.res.actual[keys[i]] = this.calc > this.res.max[keys[i]] ? this.res.max[keys[i]] : this.calc;
         }
         this.lastUpdate = currentTimeStamp;
-        callback(this.res.actual);
     }
 }
 export function deductFromRes(client, objString) {

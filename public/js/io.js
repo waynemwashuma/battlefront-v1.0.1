@@ -1,6 +1,7 @@
 //update client library//
 let socket = io.connect(window.location.host);
 socket.on('firstConnect-bases', function (data) {
+    gameLib.bases.clear()
     let flakNo = data.pop(),
         base = new Base(...data);
     for (let i = 0; i < flakNo; i++) {
@@ -9,10 +10,12 @@ socket.on('firstConnect-bases', function (data) {
     gameLib.bases.set(data[2], base);
 })
 socket.on('firstConnect-tanks', function (data) {
+    gameLib.tanks.clear()
     let tank = new Tank(...data);
     gameLib.tanks.set(data[2], tank)
 });
 socket.on('firstConnect-APCs', function (data) {
+    gameLib.APCs.clear()
     let A = new APC(...data);
     gameLib.APCs.set(data[2], A)
 });

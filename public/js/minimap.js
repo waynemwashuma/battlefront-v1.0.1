@@ -1,6 +1,6 @@
 const MiniMap = (function () {
     function objsAreAllyOrNot(obj1,obj2) {
-        if ((obj1.whose.id == obj2.id || obj1.whose.alliance == obj2.alliance) && obj1.whose.alliance.length)return true;
+        if ((obj1.whose.id == obj2.id || obj1.whose.alliance == obj2.alliance) && obj1.whose.alliance?.length)return true;
         return false
     }
     let colorAlfa = 0.6;
