@@ -1,24 +1,27 @@
 //update client library//
 let socket = io.connect(window.location.host);
-socket.on('firstConnect-bases', function (data) {
+socket.on('firstConnect', function (packet) {
     gameLib.bases.clear()
-    let flakNo = data.pop(),
-        base = new Base(...data);
-    for (let i = 0; i < flakNo; i++) {
-        base.addFlakonBase();
-    }
-    gameLib.bases.set(data[2], base);
-})
-socket.on('firstConnect-tanks', function (data) {
     gameLib.tanks.clear()
-    let tank = new Tank(...data);
-    gameLib.tanks.set(data[2], tank)
-});
-socket.on('firstConnect-APCs', function (data) {
     gameLib.APCs.clear()
-    let A = new APC(...data);
-    gameLib.APCs.set(data[2], A)
-});
+
+    packet.bases.forEach(data => {
+        let flakNo = data.pop(),
+            base = new Base(...data);
+        for (let i = 0; i < flakNo; i++) {
+            base.addFlakonBase();
+        }
+        gameLib.bases.set(data[2], base);
+    })
+    packet.tanks.forEach(data => {
+        let tank = new Tank(...data);
+        gameLib.tanks.set(data[2], tank)
+    })
+    packet.APCs.forEach(data => {
+        let A = new APC(...data);
+        gameLib.APCs.set(data[2], A)
+    })
+})
 socket.on('vehicle-rotate', data => {
     if (gameLib.tanks.has(data[0])) return gameLib.tanks.get(data[0]).deg = data[1];
     if (gameLib.APCs.has(data[0])) return gameLib.APCs.get(data[0]).deg = data[1];
@@ -38,7 +41,7 @@ socket.on(codes.objcodes.tank.toString() + codes.actioncodes.creation.toString()
     let tank = new Tank(...data);
     gameLib.tanks.set(data[2], tank);
 });
-socket.on(codes.objcodes.base.toString()+codes.actioncodes.creation.toString(),data=>{
+socket.on(codes.objcodes.base.toString() + codes.actioncodes.creation.toString(), data => {
     let base = new Base(...data);
     gameLib.bases.set(data[2], base);
 })
@@ -96,36 +99,36 @@ socket.on('base-creation', data => {
 let room;
 let box = document.querySelector('#chat-box');
 let form = document.querySelector('#chat-message');
-document.querySelector('#chat-send').onclick = e=>{
-    socket.emit('pl-message',form.value);
-    if (room) socket.emit('room-join',room)
+document.querySelector('#chat-send').onclick = e => {
+    socket.emit('pl-message', form.value);
+    if (room) socket.emit('room-join', room)
     form.value = '';
 }
-socket.on('sys-message',(...data)=>{
+socket.on('sys-message', (...data) => {
     let t = document.createElement('li');
-    t.innerHTML = data[1] +' has '+(data[0]?'connected':'disconnected');
+    t.innerHTML = data[1] + ' has ' + (data[0] ? 'connected' : 'disconnected');
     box.append(t)
 })
-socket.on('message',(...data)=>{
+socket.on('message', (...data) => {
     if (!data[0] || !data[1]) return;
     let t = document.createElement('li');
-        t.innerHTML = data[0] +':'+data[1];
+    t.innerHTML = data[0] + ':' + data[1];
     box.append(t);
     box.scroll({ top: box.scrollHeight, behavior: 'smooth' });
 });
-function updatePlayerAllianceInGame(clientname,alliance){
+function updatePlayerAllianceInGame(clientname, alliance) {
     console.log(`${clientname}::${alliance}`);
-    gameLib.bases.forEach(base=>{
+    gameLib.bases.forEach(base => {
         if (base.whose.name === clientname) {
             base.whose.alliance = alliance
         }
     });
-    gameLib.tanks.forEach(tank=>{
+    gameLib.tanks.forEach(tank => {
         if (tank.whose.name === clientname) {
             tank.whose.alliance = alliance
         }
     });
-    gameLib.APCs.forEach(apc=>{
+    gameLib.APCs.forEach(apc => {
         if (apc.whose.name === clientname) {
             apc.whose.alliance = alliance;
         }
@@ -134,10 +137,10 @@ function updatePlayerAllianceInGame(clientname,alliance){
         user.alliance = alliance
     }
 }
-socket.on('update-alli',(...data)=>{
-    updatePlayerAllianceInGame(data[0],data[1])   
+socket.on('update-alli', (...data) => {
+    updatePlayerAllianceInGame(data[0], data[1])
 })
-socket.on('rooms',console.log);
+socket.on('rooms', console.log);
 socket.on('log', console.log)
 //emit target base intended to produce the vehicle --done//
 //placed in creatoncard class{res.js}//

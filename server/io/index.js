@@ -1,6 +1,6 @@
 import { DBpool, codes } from "../constants.js";
 import { Server } from 'socket.io'
-import { Vector, avoidAllCollision, CaptureCard, captures, gameLib, creations, addBase, hasBase, VehicleType, CreationCard } from '../game/index.js'
+import { Vector, avoidAllCollision, CaptureCard, captures, gameLib, creations, addBase, hasBase, VehicleType, CreationCard, objsAreAlly } from '../game/index.js'
 import * as clientHandler from "../node_utils/chatconfig.js";
 import cookie from 'cookie'
 import { deductFromRes } from "../node_utils/resHandler.js";
@@ -48,16 +48,19 @@ io.on('connection', socket => {
         (clientHandler.chatRooms);
     })
     socket.broadcast.emit('sys-message', true, socket.id)
-    gameLib.bases.forEach(b => {
-        io.sockets.to(socket.id).emit('firstConnect-bases', [b.pos.x, b.pos.y, b.id, b.whose, b.flaks.length]);
-    });
-    gameLib.tanks.forEach(b => {
-        io.sockets.to(socket.id).emit('firstConnect-tanks', [b.pos.x, b.pos.y, b.id, b.whose, b.deg]);
-    });
-    gameLib.APCs.forEach(b => {
-        io.sockets.to(socket.id).emit('firstConnect-APCs', [b.pos.x, b.pos.y, b.id, b.whose, b.deg]);
-    });
+    let packet = {
+        bases:[],
+        tanks:[],
+        APCs:[],
+        flaks:[]
+    }
+    gameLib.bases.forEach(v=>packet.bases.push(v.toJson()))
+    gameLib.tanks.forEach(v=>packet.tanks.push(v.toJson()))
+    gameLib.APCs.forEach(v=>packet.APCs.push(v.toJson()))
+    gameLib.flaks.forEach(v=>packet.flaks.push(v.toJson()))
+    
 
+    io.sockets.to(socket.id).emit('firstConnect',packet);
     socket.on(codes.actioncodes.occupation.toString(), e => {
         let client = clientHandler.findClient(socket.id);
         if (!gameLib.has(e[1], VehicleType.APC)) return;
@@ -67,9 +70,13 @@ io.on('connection', socket => {
     socket.on(codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(), e => {
         let client = clientHandler.findClient(socket.id)
         if (!gameLib.has(e, VehicleType.BASE)) return;
+
         //for some weird reason,this request is being recieved twice per every creation request by client,this fixes that...temporarily.
         if (creations.find(b => b.base.id == e)) return;
+
         if (!validateObjBelongToSender(gameLib.get(e, VehicleType.BASE), client)) return;
+        console.log(e);
+
         deductFromRes(client, 'tank')
         let card = new CreationCard(codes.objcodes.tank, gameLib.get(e, VehicleType.BASE))
         creations.push(card)
@@ -132,6 +139,7 @@ export function updatePlayerAllianceInGame(clientname, alliance) {
     io.sockets.emit('update-alli', clientname, alliance)
 }
 function validateObjBelongToSender(obj, client) {
+    console.log(obj.whose,client.uid);
     if (client) {
         if (client.uid === obj.whose.id) {
             return true
@@ -151,7 +159,7 @@ function moveToCaptureBase(base, obj) {
     if (base.flaks.length > 0) {
         clientHandler.clients.forEach(c => {
             if (c.name == obj.whose.name) {
-                server.to(c.socketid).emit('game-error', 'Destroy the flaks on the base first');
+                io.to(c.socketid).emit('game-error', 'Destroy the flaks on the base first');
             }
         });
         return
@@ -189,6 +197,7 @@ gameLib.addListener("rotate", ev => {
     io.sockets.emit('vehicle-rotate', ev);
 })
 gameLib.addListener("flak-rotate", ev => { 
+    console.log(ev);
     io.sockets.emit('flak-rotate', ev);
 })
 gameLib.addListener("base-rename", ev => {
