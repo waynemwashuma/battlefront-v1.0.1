@@ -47,9 +47,8 @@ export class Base {
     }
     _addFlak() {
         if (this.flaks.length >= maxFlaks) return;
-        let flak = new Flak(...determineFlakpos(this, this.flaks.length), 0, this.flaks.length)
+        let flak = new Flak(...determineFlakpos(this, this.flaks.length), 0, this)
         this.flaks.push(flak);
-        flak.base = this
         this.gameLib.add(
             flak, VehicleType.FLAK
         );

@@ -7,7 +7,7 @@ export class Tank extends Vehicle {
     constructor(x, y, id, whose, deg) {
         super(x, y, id, whose, deg);
         this.name = 'tank';
-        this.turrent = new Turrent(this.pos.x, this.pos.y, this.id);
+        this.turrent = new Turrent(this.pos.x, this.pos.y, this);
         Tank.prototype.drawAll = function (ct, originX, originY) {
             this.draw(ct, originX, originY);
             this.turrent.draw(ct, originX, originY);

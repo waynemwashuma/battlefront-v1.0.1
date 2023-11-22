@@ -57,7 +57,7 @@ socket.on('flak-rotate', function (data) {
     if (data[0] == 'flak') {
         gameLib.bases.get(data[3]).flaks[data[1]].deg = data[2];
     } else {
-        gameLib.tanks.get(data[1]).turrent.deg = data[2];
+        gameLib.tanks.get(data[3]).turrent.deg = data[2];
     }
 });
 socket.on(codes.actioncodes.destruction.toString(), data => {

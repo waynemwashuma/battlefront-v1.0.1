@@ -12,8 +12,9 @@ export function objsAreAlly(obj1, obj2) {
 }
 
 //flak class
-export function Flak(x, y, deg,index) {
-    this.index = index
+export function Flak(x, y, deg,parent) {
+    this.parent = parent
+    this.index = parent?.flaks?.length || -1
     this.id = gen.next().value;
     this.name = 'flak';
     this.health = 100;
@@ -56,13 +57,13 @@ export function Flak(x, y, deg,index) {
     Flak.prototype.remove = function (arr) {
         arr.remove(this,VehicleType.FLAK);
     };
-    Flak.prototype.rotate = function (obj, thisid) {
+    Flak.prototype.rotate = function (obj) {
         this.Undeg = Vector.getDegBtwnVectors(obj.pos.copy().subtract(this.pos), Vector.DegToUN(this.deg));
         if (this.Undeg < 2) {
             return true;
         }
         this.deg++;
-        this.gameLib.triggerListener('flak-rotate', [this.name, this.id, this.deg, thisid]);
+        this.gameLib.triggerListener('flak-rotate', [this.name, this.index, this.deg, this.parent.id]);
         return false;
     };
     Flak.prototype.fireOn = function (obj, thisid) {
