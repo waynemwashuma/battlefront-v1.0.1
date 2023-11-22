@@ -18,10 +18,10 @@ function determineFlakpos(that, n) {
     return [xt, that.pos.y + that.h + turrentRadius + turrentSpacing];
 }
 export class Base {
-    constructor(x, y, whose) {
+    constructor(x, y, whose,id = gen.next().value) {
         this.gameLib = null
         this.name = 'base';
-        this.id = gen.next().value;
+        this.id = id;
         this.pos = new Vector(x, y);
         this.w = baseWidth;
         this.h = baseHeight;
@@ -92,4 +92,8 @@ export class Base {
         }
         return false;
     };
+    toJson() {
+        let b = this
+        return [b.pos.x, b.pos.y, b.id, b.whose, b.flaks.length]
+    }
 }

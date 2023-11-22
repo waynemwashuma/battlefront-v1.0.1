@@ -15,4 +15,10 @@ export class APC extends Vehicle {
     remove(arr) {
         this.gameLib.remove(this,VehicleType.APC)
     }
+    toJson(){
+        return [this.pos.x, this.pos.y, this.id, this.whose, this.deg]
+    }
+    static fromJson(obj){
+        return new APC(...obj)
+    }
 }

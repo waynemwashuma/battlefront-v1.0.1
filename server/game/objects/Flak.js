@@ -74,4 +74,7 @@ export function Flak(x, y, deg,parent) {
 
         }
     };
+    Flak.prototype.toJson = function(){
+        return [this.parent.id,this.index]
+    }
 }

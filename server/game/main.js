@@ -135,7 +135,6 @@ export function addBase(whose) {
     }
     const base = new Base(x, y, whose)
     gameLib.add(base, VehicleType.BASE);
-
 }
 export function initBases(n) {
     let b = [];

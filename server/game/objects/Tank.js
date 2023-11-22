@@ -31,6 +31,10 @@ export class Tank extends Vehicle {
             }
         };
     }
+    toJson(){
+        let b = this
+        return [b.pos.x, b.pos.y, b.id, b.whose, b.deg]
+    }
     init(gameLib){
         this.turrent.gameLib = gameLib
     }
