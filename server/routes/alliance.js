@@ -1,5 +1,6 @@
 import {Router} from 'express'
 import { DBpool } from "../constants.js"
+import {updatePlayerAllianceInGame} from "../io/index.js"
 
 const router  = Router()
 router.post('/createAlliance', (req, res) => {

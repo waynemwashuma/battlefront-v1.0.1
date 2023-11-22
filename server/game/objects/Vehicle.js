@@ -1,5 +1,7 @@
 import { codes } from "../../constants.js";
 import { Vector } from "../math/vector.js";
+import {circle_collider} from '../functions.js'
+import { gameLib } from "../main.js";
 
 
 export class Vehicle {
@@ -22,19 +24,17 @@ export class Vehicle {
                         this.moveTo.shift();
                     }
                     this.pos.add(this.vel);
-                    server.emit(codes.actioncodes.movement, [this.id, this.pos]);
+                    this.gameLib.triggerListener("move",[this.id, this.pos])
                 }
             }
         };
         Vehicle.prototype.removeAsHealth0 = function name(arr) {
             if (this.health < 1) {
                 this.remove(arr);
-                server.emit(codes.actioncodes.destruction.toString(), [this.name, this.id]);
             }
         };
         Vehicle.prototype.remove = function (arr) {
-            server.emit(codes.actioncodes.destruction.toString(), [this.name, this.id]);
-            arr.delete(this.id);
+            throw "Implement 'remove()' in derived class of Vehicle " + this.constructor.name
         };
         Vehicle.prototype.rotate = function () {
             this.Undeg = Vector.getDegBtwnVectors(this.moveTo[0].copy().subtract(this.pos), Vector.DegToUN(this.deg));
@@ -44,7 +44,7 @@ export class Vehicle {
                 return true;
             }
             --this.deg;
-            server.emit('vehicle-rotate', [this.id, this.deg]);
+            this.gameLib.triggerListener('rotate', [this.id, this.deg]);
             return false;
         };
     }

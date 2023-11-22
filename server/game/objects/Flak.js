@@ -1,5 +1,8 @@
-import { codes, flakRadius } from "../../constants.js";
+import { flakRadius, gen } from "../../constants.js";
+import { circle_collider } from "../functions.js";
+import { VehicleType } from "../main.js";
 import { Vector } from "../math/vector.js";
+
 export function objsAreAlly(obj1, obj2) {
     if (
         (obj1.whose.id === obj2.whose.id || obj1.whose.alliance === obj2.whose.alliance) &&
@@ -9,8 +12,9 @@ export function objsAreAlly(obj1, obj2) {
 }
 
 //flak class
-export function Flak(x, y, deg, id) {
-    this.id = id;
+export function Flak(x, y, deg,index) {
+    this.index = index
+    this.id = gen.next().value;
     this.name = 'flak';
     this.health = 100;
     this.pos = new Vector(x, y);
@@ -47,11 +51,10 @@ export function Flak(x, y, deg, id) {
     Flak.prototype.removeAsHealth0 = function name(arr, base) {
         if (this.health < 1) {
             this.remove(arr);
-            server.emit(codes.actioncodes.destruction.toString(), [this.name, base.id]);
         }
     };
     Flak.prototype.remove = function (arr) {
-        arr.remove(this);
+        arr.remove(this,VehicleType.FLAK);
     };
     Flak.prototype.rotate = function (obj, thisid) {
         this.Undeg = Vector.getDegBtwnVectors(obj.pos.copy().subtract(this.pos), Vector.DegToUN(this.deg));
@@ -59,14 +62,15 @@ export function Flak(x, y, deg, id) {
             return true;
         }
         this.deg++;
-        server.emit('flak-rotate', [this.name, this.id, this.deg, thisid]);
+        this.gameLib.triggerListener('flak-rotate', [this.name, this.id, this.deg, thisid]);
         return false;
     };
     Flak.prototype.fireOn = function (obj, thisid) {
         if (this.reload <= 0) {
-            server.emit('fire', [this.name, this.id, obj.id, thisid]);
             obj.health -= this.damage;
             this.reload = 10000;
+            this.gameLib.triggerListener('fire', [this.name, this.id, obj.id, thisid])
+
         }
     };
 }

@@ -1,3 +1,4 @@
+import { VehicleType, gameLib } from "../main.js";
 import { Turrent } from "./Turrent.js";
 import { Vehicle } from "./Vehicle.js";
 
@@ -30,4 +31,10 @@ export class Tank extends Vehicle {
             }
         };
     }
+    init(gameLib){
+        this.turrent.gameLib = gameLib
+    }
+    remove(arr) {
+        this.gameLib.remove(this,VehicleType.TANK)
+    };
 }

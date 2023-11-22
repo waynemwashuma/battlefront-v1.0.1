@@ -1,8 +1,9 @@
 import { DBpool, codes } from "../constants.js";
 import { Server } from 'socket.io'
-import { Vector, avoidAllCollision, CaptureCard, captures, gameLib, creations, addBase, hasBase, VehicleType } from '../game/index.js'
+import { Vector, avoidAllCollision, CaptureCard, captures, gameLib, creations, addBase, hasBase, VehicleType, CreationCard } from '../game/index.js'
 import * as clientHandler from "../node_utils/chatconfig.js";
 import cookie from 'cookie'
+import { deductFromRes } from "../node_utils/resHandler.js";
 
 export const io = new Server();
 
@@ -44,7 +45,7 @@ io.on('connection', socket => {
         clientHandler.removeFromRoom(user, room)
     })
     socket.on('rooms', e => {
-        console.log(clientHandler.chatRooms);
+        (clientHandler.chatRooms);
     })
     socket.broadcast.emit('sys-message', true, socket.id)
     gameLib.bases.forEach(b => {
@@ -69,16 +70,16 @@ io.on('connection', socket => {
         //for some weird reason,this request is being recieved twice per every creation request by client,this fixes that...temporarily.
         if (creations.find(b => b.base.id == e)) return;
         if (!validateObjBelongToSender(gameLib.get(e, VehicleType.BASE), client)) return;
-        resHandler.deductFromRes(client, 'tank')
-        
-        creations.push(new CreationCard(codes.objcodes.tank, gameLib.get(e, VehicleType.BASE)))
+        deductFromRes(client, 'tank')
+        let card = new CreationCard(codes.objcodes.tank, gameLib.get(e, VehicleType.BASE))
+        creations.push(card)
     });
     socket.on(codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(), e => {
         let client = clientHandler.findClient(socket.id);
         if (!gameLib.has(e, VehicleType.BASE)) return;
         if (creations.find(b => b.base.id == e)) return;
         if (!validateObjBelongToSender(gameLib.get(e, VehicleType.BASE), client)) return;
-        resHandler.deductFromRes(client, 'APC');
+        deductFromRes(client, 'APC');
         creations.push(new CreationCard(codes.objcodes.APC, gameLib.get(e, VehicleType.BASE)))
     });
     socket.on(codes.objcodes.flak.toString() + codes.actioncodes.creation.toString(), e => {
@@ -86,7 +87,7 @@ io.on('connection', socket => {
         if (!gameLib.has(e, VehicleType.BASE)) return;
         if (creations.find(b => b.base.id == e)) return;
         if (!validateObjBelongToSender(gameLib.get(e, VehicleType.BASE), client)) return;
-        resHandler.deductFromRes(client, 'flak')
+        deductFromRes(client, 'flak')
         creations.push(new CreationCard(codes.objcodes.flak, gameLib.get(e, VehicleType.BASE)))
     });
     socket.on(codes.actioncodes.movement.toString(), e => {
@@ -111,6 +112,24 @@ io.on('connection', socket => {
 });
 export function emitGameError(error, id) {
     io.sockets.to(id).emit('game-error', error)
+}
+export function updatePlayerAllianceInGame(clientname, alliance) {
+    gameLib.bases.forEach(base => {
+        if (base.whose.name === clientname) {
+            base.whose.alliance = alliance
+        }
+    });
+    gameLib.tanks.forEach(tank => {
+        if (tank.whose.name === clientname) {
+            tank.whose.alliance = alliance
+        }
+    });
+    gameLib.APCs.forEach(apc => {
+        if (apc.whose.name === clientname) {
+            apc.whose.alliance = alliance
+        }
+    });
+    io.sockets.emit('update-alli', clientname, alliance)
 }
 function validateObjBelongToSender(obj, client) {
     if (client) {
@@ -145,7 +164,6 @@ gameLib.addListener('add', ev => {
     let t = ev.entity
     switch (ev.type) {
         case VehicleType.TANK:
-            console.log(t);
             io.sockets.emit(
                 codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(),
                 [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
@@ -164,8 +182,25 @@ gameLib.addListener('add', ev => {
             );
     }
 })
-/*gameLib.addListener("remove", ev => {
+gameLib.addListener("move", ev => {
+    io.sockets.emit(codes.actioncodes.movement.toString(), ev)
+})
+gameLib.addListener("rotate", ev => {
+    io.sockets.emit('vehicle-rotate', ev);
+})
+gameLib.addListener("flak-rotate", ev => {
+    io.sockets.emit('flak-rotate', ev);
+})
+gameLib.addListener("base-rename", ev => {
+    io.sockets.emit('base-name', ev);
+})
+gameLib.addListener("fire", ev => {
+    io.sockets.emit('fire', ev);
+})
+gameLib.addListener("remove", ev => {
     let t = ev.entity
+    io.sockets.emit(codes.actioncodes.destruction.toString(), [t.name, t.id]);
+    return
     switch (ev.type) {
         case VehicleType.TANK:
             io.sockets.emit(
@@ -184,4 +219,10 @@ gameLib.addListener('add', ev => {
                 codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(),
                 [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
             );
-})*/
+    }
+})
+gameLib.addListener('res-update', () => {
+    clientHandler.clients.forEach(c => {
+        io.sockets.to(c.socketid).emit('res-update', c.resHandler.res.actual)
+    })
+})

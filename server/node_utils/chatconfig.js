@@ -1,6 +1,6 @@
 import { ResHandler } from './resHandler.js'
 Array.prototype.remove = function (value) {
-    let w = this.findIndex(client => client.socketid == id);
+    let w = this.indexOf(value)
     if (w == -1) return;
     return this.splice(w, 1)[0]
 }
@@ -62,7 +62,6 @@ function resolveAndJoinRoom(room, socket, alliance = '') {
         client.rooms.push(room);
         socket.join(room);
     }
-    //console.log(clients);
 }
 function findRoom(room) {
     chatRooms.find(e => e.name === room)
