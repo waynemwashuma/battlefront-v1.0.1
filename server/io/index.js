@@ -139,7 +139,6 @@ export function updatePlayerAllianceInGame(clientname, alliance) {
     io.sockets.emit('update-alli', clientname, alliance)
 }
 function validateObjBelongToSender(obj, client) {
-    console.log(obj.whose,client.uid);
     if (client) {
         if (client.uid === obj.whose.id) {
             return true
@@ -200,8 +199,8 @@ gameLib.addListener("flak-rotate", ev => {
     console.log(ev);
     io.sockets.emit('flak-rotate', ev);
 })
-gameLib.addListener("base-rename", ev => {
-    io.sockets.emit('base-name', ev);
+gameLib.addListener("capture", ev => {
+    io.sockets.emit('base-rename', ev);
 })
 gameLib.addListener("fire", ev => {
     io.sockets.emit('fire', ev);
