@@ -1,4 +1,5 @@
-import mysql from "mysql2"
+import mysql from "mysql"
+import 'dotenv/config'
 
 export const login = {
   host: process.env.MYSQLHOST || '127.0.0.1',

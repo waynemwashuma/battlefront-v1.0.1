@@ -18,7 +18,6 @@ export function CreationCard(objcode, base) {
             break;
     }
     CreationCard.prototype.remove = function (arr) {
-        console.log('new object added to library');
         this.base.isSpawning = false;
         this.base.spawn(this.code);
         arr.remove(this);
