@@ -77,11 +77,11 @@ socket.on(codes.actioncodes.destruction.toString(), data => {
 });
 socket.on('fire', data => {
     if (data[0] == 'turrent') {
-        if (data[3]) {
-            gameLib.bullets.push(new Bullet(gameLib.tanks.get(data[1]), gameLib.bases.get(data[3]).flaks[gameLib.bases.get(data[3]).flaks.length - 1]))
+        if (gameLib.bases.has(data[2])) {
+            gameLib.bullets.push(new Bullet(gameLib.tanks.get(data[3]), gameLib.bases.get(data[2]).flaks[gameLib.bases.get(data[2]).flaks.length - 1]))
         }
         else {
-            gameLib.bullets.push(new Bullet(gameLib.tanks.get(data[1]), gameLib.tanks.has(data[2]) ? gameLib.tanks.get(data[2]) : gameLib.APCs.get(data[2])));
+            gameLib.bullets.push(new Bullet(gameLib.tanks.get(data[3]), gameLib.tanks.has(data[2]) ? gameLib.tanks.get(data[2]) : gameLib.APCs.get(data[2])));
         }
     }
     if (data[0] == 'flak') gameLib.bullets.push(new Bullet(gameLib.bases.get(data[3]).flaks[data[1]], gameLib.tanks.has(data[2]) ? gameLib.tanks.get(data[2]) : gameLib.APCs.get(data[2])));
