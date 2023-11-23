@@ -75,7 +75,6 @@ io.on('connection', socket => {
         if (creations.find(b => b.base.id == e)) return;
 
         if (!validateObjBelongToSender(gameLib.get(e, VehicleType.BASE), client)) return;
-        console.log(e);
 
         deductFromRes(client, 'tank')
         let card = new CreationCard(codes.objcodes.tank, gameLib.get(e, VehicleType.BASE))
@@ -95,7 +94,8 @@ io.on('connection', socket => {
         if (creations.find(b => b.base.id == e)) return;
         if (!validateObjBelongToSender(gameLib.get(e, VehicleType.BASE), client)) return;
         deductFromRes(client, 'flak')
-        creations.push(new CreationCard(codes.objcodes.flak, gameLib.get(e, VehicleType.BASE)))
+        let card = new CreationCard(codes.objcodes.flak, gameLib.get(e, VehicleType.BASE))
+        creations.push(card)
     });
     socket.on(codes.actioncodes.movement.toString(), e => {
         let client = clientHandler.findClient(socket.id);
@@ -109,9 +109,10 @@ io.on('connection', socket => {
         };
     });
     socket.on('disconnect', () => {
-        clientHandler.updateClient(clientHandler.findClient(socket.id), false)
-        console.log(`Player disconnected ::: id:${socket.id}`);
-        socket.broadcast.emit('sys-message', false, socket.id);
+        let client = clientHandler.findClient(socket.id)
+        if (client == void 0) return
+        socket.broadcast.emit('sys-message', false, client.name);
+        clientHandler.updateClient(client, false)
     })
     socket.on('log', () => {
         console.log(gameLib);
@@ -187,6 +188,11 @@ gameLib.addListener('add', ev => {
                 codes.objcodes.base.toString() + codes.actioncodes.creation.toString(),
                 [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
             );
+        case VehicleType.FLAK:
+            io.sockets.emit(
+                codes.objcodes.flak.toString() + codes.actioncodes.creation.toString(),
+                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
+            );
     }
 })
 gameLib.addListener("move", ev => {
@@ -206,7 +212,7 @@ gameLib.addListener("fire", ev => {
 })
 gameLib.addListener("remove", ev => {
     let t = ev.entity
-    let id = VehicleType.FLAK ? t.parent.id : t.id
+    let id = VehicleType.FLAK === ev.type ? t.parent.id : t.id
     io.sockets.emit(codes.actioncodes.destruction.toString(), [t.name, id])
 })
 gameLib.addListener('res-update', () => {

@@ -9,6 +9,7 @@ export class Tank extends Vehicle {
         this.health = 100;
         this.name = 'tank';
         this.turrent = new Turrent(this.pos.x, this.pos.y, this);
+        this.turrent.parent = this
     }
     drawAll = function (ct, originX, originY) {
         this.draw(ct, originX, originY);
