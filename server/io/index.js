@@ -188,11 +188,13 @@ gameLib.addListener('add', ev => {
                 codes.objcodes.base.toString() + codes.actioncodes.creation.toString(),
                 [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
             );
+            break
         case VehicleType.FLAK:
             io.sockets.emit(
                 codes.objcodes.flak.toString() + codes.actioncodes.creation.toString(),
-                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
+                [t.parent.id]
             );
+            break
     }
 })
 gameLib.addListener("move", ev => {
