@@ -9,8 +9,11 @@ CREATE TABLE IF NOT EXISTS users(
 CREATE TABLE IF NOT EXISTS players(
     uid INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(20) NOT NULL UNIQUE ,
+    alliance VARCHAR(20),
     score  VARCHAR(20),
-    bases INT NOT NULL
+    bases INT NOT NULL,
+    lastLogin INT,
+    LastOnline INT
 );
 CREATE TABLE IF NOT EXISTS resources(
     PlayerId INT NOT NULL PRIMARY KEY,
