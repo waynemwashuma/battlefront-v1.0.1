@@ -49,18 +49,18 @@ io.on('connection', socket => {
     })
     socket.broadcast.emit('sys-message', true, socket.id)
     let packet = {
-        bases:[],
-        tanks:[],
-        APCs:[],
-        flaks:[]
+        bases: [],
+        tanks: [],
+        APCs: [],
+        flaks: []
     }
-    gameLib.bases.forEach(v=>packet.bases.push(v.toJson()))
-    gameLib.tanks.forEach(v=>packet.tanks.push(v.toJson()))
-    gameLib.APCs.forEach(v=>packet.APCs.push(v.toJson()))
-    gameLib.flaks.forEach(v=>packet.flaks.push(v.toJson()))
-    
+    gameLib.bases.forEach(v => packet.bases.push(v.toJson()))
+    gameLib.tanks.forEach(v => packet.tanks.push(v.toJson()))
+    gameLib.APCs.forEach(v => packet.APCs.push(v.toJson()))
+    gameLib.flaks.forEach(v => packet.flaks.push(v.toJson()))
 
-    io.sockets.to(socket.id).emit('firstConnect',packet);
+
+    io.sockets.to(socket.id).emit('firstConnect', packet);
     socket.on(codes.actioncodes.occupation.toString(), e => {
         let client = clientHandler.findClient(socket.id);
         if (!gameLib.has(e[1], VehicleType.APC)) return;
@@ -114,7 +114,7 @@ io.on('connection', socket => {
         socket.broadcast.emit('sys-message', false, socket.id);
     })
     socket.on('log', () => {
-        console.log(clientHandler.clients);
+        console.log(gameLib);
     })
 });
 export function emitGameError(error, id) {
@@ -195,8 +195,7 @@ gameLib.addListener("move", ev => {
 gameLib.addListener("rotate", ev => {
     io.sockets.emit('vehicle-rotate', ev);
 })
-gameLib.addListener("flak-rotate", ev => { 
-    console.log(ev);
+gameLib.addListener("flak-rotate", ev => {
     io.sockets.emit('flak-rotate', ev);
 })
 gameLib.addListener("capture", ev => {
@@ -207,31 +206,12 @@ gameLib.addListener("fire", ev => {
 })
 gameLib.addListener("remove", ev => {
     let t = ev.entity
-    io.sockets.emit(codes.actioncodes.destruction.toString(), [t.name, t.id]);
-    return
-    switch (ev.type) {
-        case VehicleType.TANK:
-            io.sockets.emit(
-                codes.objcodes.tank.toString() + codes.actioncodes.creation.toString(),
-                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
-            );
-            break;
-        case VehicleType.APC:
-            io.sockets.emit(
-                codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(),
-                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
-            );
-            break;
-        case VehicleType.BASE:
-            io.sockets.emit(
-                codes.objcodes.APC.toString() + codes.actioncodes.creation.toString(),
-                [t.pos.x, t.pos.y, t.id, t.whose, t.deg]
-            );
-    }
+    let id = VehicleType.FLAK ? t.parent.id : t.id
+    io.sockets.emit(codes.actioncodes.destruction.toString(), [t.name, id])
 })
 gameLib.addListener('res-update', () => {
     clientHandler.clients.forEach(c => {
         c.resHandler.update()
-        io.sockets.to(c.socketid).emit('res-update', c.resHandler.res.actual)         
+        io.sockets.to(c.socketid).emit('res-update', c.resHandler.res.actual)
     })
 })
