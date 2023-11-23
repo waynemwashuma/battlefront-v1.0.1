@@ -80,13 +80,18 @@ export const gameLib = {
         let id = entity.id
         switch (type) {
             case VehicleType.TANK:
-                return this.tanks.delete(id)
+                this.tanks.delete(id)
+                break
             case VehicleType.APC:
-                return this.APCs.delete(id)
+                this.APCs.delete(id)
+                break
             case VehicleType.BASE:
-                return this.bases.delete(id)
+                this.bases.delete(id)
+                break
             case VehicleType.FLAK:
-                return this.flaks.delete(id)
+                entity.parent.flaks.remove(entity)
+                this.flaks.delete(id)
+                break
         }
         this.triggerListener('remove', {
             type,
