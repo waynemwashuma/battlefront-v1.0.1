@@ -14,7 +14,7 @@ export function objsAreAlly(obj1, obj2) {
 //flak class
 export function Flak(x, y, deg,parent) {
     this.parent = parent
-    this.index = parent?.flaks?.length || -1
+    this.index = parent?.flaks?.length ?? -1
     this.id = gen.next().value;
     this.name = 'flak';
     this.health = 100;
@@ -54,8 +54,8 @@ export function Flak(x, y, deg,parent) {
             this.remove(arr);
         }
     };
-    Flak.prototype.remove = function (arr) {
-        arr.remove(this,VehicleType.FLAK);
+    Flak.prototype.remove = function () {
+        this.gameLib.remove(this,VehicleType.FLAK);
     };
     Flak.prototype.rotate = function (obj) {
         this.Undeg = Vector.getDegBtwnVectors(obj.pos.copy().subtract(this.pos), Vector.DegToUN(this.deg));
@@ -66,11 +66,13 @@ export function Flak(x, y, deg,parent) {
         this.gameLib.triggerListener('flak-rotate', [this.name, this.index, this.deg, this.parent.id]);
         return false;
     };
-    Flak.prototype.fireOn = function (obj, thisid) {
+    Flak.prototype.fireOn = function (obj) {
         if (this.reload <= 0) {
             obj.health -= this.damage;
             this.reload = 10000;
-            this.gameLib.triggerListener('fire', [this.name, this.id, obj.id, thisid])
+            ///todo - fix this temp fix
+            let correctid = obj.name === "flak"?obj.parent.id:obj.id
+            this.gameLib.triggerListener('fire', [this.name, this.index, correctid, this.parent.id])
 
         }
     };

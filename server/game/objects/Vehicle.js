@@ -28,9 +28,9 @@ export class Vehicle {
                 }
             }
         };
-        Vehicle.prototype.removeAsHealth0 = function name(arr) {
+        Vehicle.prototype.removeAsHealth0 = function name() {
             if (this.health < 1) {
-                this.remove(arr);
+                this.remove();
             }
         };
         Vehicle.prototype.remove = function (arr) {
