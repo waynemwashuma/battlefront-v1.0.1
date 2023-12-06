@@ -28,19 +28,20 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
     - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+      name: Use Node.js ${{ matrix.node-version }}
+    - uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
 
     - name: Fill Database
-    - run: |
+      run: |
           sudo /etc/init.d/mysql start
           sudo mysql -uroot -proot -e 'CREATE DATABASE IF NOT EXISTS battlefront;'
           mysql -uroot -proot battlefront < ./server/db.sql
         
-    - name: Run server
-    - run: npm run build --if-present
-    - run: npm run start
+    - name: Build server
+      run: npm run build --if-present
+    - name : run server
+      run: npm run start
