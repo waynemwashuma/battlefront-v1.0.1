@@ -1,0 +1,6 @@
+{
+  "run": {
+    "type": "url",
+    "url": "http://localhost:3000"
+  }
+}
